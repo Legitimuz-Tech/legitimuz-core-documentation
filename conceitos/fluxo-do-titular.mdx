@@ -1,0 +1,51 @@
+---
+title: "Fluxo do titular"
+description: "As telas que o titular percorre dentro do widget, das boas-vindas ao resultado."
+---
+
+O fluxo abaixo é o caminho completo. O servidor decide quais etapas aparecem para cada verificação,
+e a configuração do fluxo pode desligar as telas de boas-vindas e de resultado.
+
+## Etapas
+
+<Steps>
+  <Step title="Boas-vindas">
+    Apresenta a verificação e pede o consentimento para começar. Quando o fluxo permite reaproveitar
+    uma verificação anterior do titular, a oferta aparece aqui e ele confirma antes de seguir.
+  </Step>
+  <Step title="Documento">
+    O titular escolhe o tipo de documento (a escolha é pulada quando o fluxo aceita um tipo só) e
+    captura frente e verso conforme o documento pede. Os métodos de captura disponíveis (câmera,
+    galeria, documento digital) dependem da configuração do fluxo.
+
+    Se a imagem não serve, o servidor pede uma nova tentativa com o motivo específico na tela:
+    documento vencido, imagem ilegível, lados que não correspondem. O titular não fica adivinhando o
+    que corrigir.
+  </Step>
+  <Step title="Prova de vida">
+    Captura facial conduzida pelo motor de prova de vida configurado no fluxo. Uma nova tentativa,
+    quando necessária, também é decisão do servidor.
+  </Step>
+  <Step title="Processamento">
+    O widget aguarda o servidor concluir as análises e mostra o andamento ao titular.
+  </Step>
+  <Step title="Resultado">
+    O fluxo termina e o host recebe o desfecho via `onComplete`. A decisão da verificação não
+    aparece para o titular nem chega ao navegador. Veja
+    [como a verificação funciona](/conceitos/como-funciona).
+  </Step>
+</Steps>
+
+Cada etapa emite eventos que a sua página pode acompanhar. O catálogo completo está em
+[eventos](/web-sdk/eventos).
+
+## Idioma
+
+O widget fala **pt-BR** e **inglês**. O idioma vem da opção `locale` do `mount()`; valores com
+região resolvem por prefixo (`en-US` vira `en`) e qualquer idioma não suportado cai para `pt-BR`.
+
+## Tema
+
+O widget renderiza em tema claro ou escuro conforme a opção `colorScheme` do `mount()`. Com
+`"auto"`, o Web SDK resolve o tema pela preferência do navegador antes de abrir o widget. O embed
+nunca segue sozinho a preferência do sistema do titular, para não destoar da página que o embute.

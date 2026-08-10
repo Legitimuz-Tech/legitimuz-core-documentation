@@ -1,0 +1,43 @@
+---
+title: "Como a verificação funciona"
+description: "O papel do host, do embed e do servidor durante uma verificação de identidade."
+---
+
+Uma verificação envolve três participantes. O **host** é a sua página, que embute o widget com o
+Web SDK. O **embed** é o app de verificação da Legitimuz, servido em `verify.legitimuz.com` dentro
+de um iframe; é com ele que o titular interage. E o **servidor** decide cada etapa do fluxo e
+processa as capturas.
+
+## O servidor decide o fluxo
+
+O embed não conhece o fluxo de antemão: a cada etapa concluída, o servidor responde com a próxima
+tela, inclusive quando a resposta é repetir uma captura. Na prática:
+
+- O fluxo evolui sem você atualizar nada. A ordem das etapas, uma nova tentativa de captura e o
+  encerramento são decisões do servidor.
+- O host não pula nem força etapas. O que a sua página controla está nas
+  [opções do `mount()`](/web-sdk/opcoes): aparência, idioma e callbacks.
+
+## O que chega à sua página
+
+O Web SDK entrega dois tipos de informação, por canais separados. Os eventos de progresso chegam em
+`onEvent`: telemetria da sessão (captura iniciada, etapa concluída, erro), útil para analytics e
+para reagir na sua interface. Veja [eventos](/web-sdk/eventos). O desfecho do fluxo chega em
+`onComplete` e `onCancel`: o titular terminou ou saiu. `onComplete` significa que o fluxo terminou,
+não que foi aprovado: cheque `result.status`.
+
+A decisão da verificação (aprovada, reprovada, em análise) nunca chega ao navegador. Ela é
+entregue ao seu backend, fora do alcance do titular e de qualquer script de terceiro na página.
+
+{/* TODO: linkar a página de webhooks quando o disparo estiver disponível (legitimuz-core-api, DD-17) */}
+
+## Segurança por origem
+
+O iframe só se comunica com a sua página depois de um handshake que confere a origem do host contra
+a allowlist da integração, a mesma lista que autoriza a sua página a embutir o widget. Página fora
+da allowlist não recebe mensagem nenhuma e não monta o fluxo. Os detalhes estão em
+[segurança](/web-sdk/seguranca).
+
+<Card title="Fluxo do titular" icon="footprints" href="/conceitos/fluxo-do-titular">
+  As telas que o titular percorre dentro do widget, etapa por etapa.
+</Card>

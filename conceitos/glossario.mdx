@@ -1,0 +1,24 @@
+---
+title: "Glossário"
+description: "Os termos que esta documentação usa, com um nome só para cada conceito."
+---
+
+Cada conceito tem um nome, e é o mesmo em todas as páginas.
+
+| Termo | O que é |
+| --- | --- |
+| **Titular** | A pessoa sendo verificada. |
+| **Integrador** | O cliente que instala o Web SDK e conecta o resultado ao próprio sistema. |
+| **Analista** | Quem opera o dashboard de compliance. |
+| **Host** | A página do integrador que embute o widget. |
+| **Embed** | O app de verificação da Legitimuz, servido em `verify.legitimuz.com` dentro do iframe. |
+| **Widget** | O embed visto de dentro da página do host: o que o `mount()` renderiza no container. |
+| **Web SDK** | O pacote `@legitimuz/websdk`, que o integrador instala para montar o widget. |
+| **Verificação** | O processo completo de um titular: as etapas, as capturas e a decisão. |
+| **Etapa** | Uma tela do fluxo. Qual etapa vem a seguir é sempre decisão do servidor. |
+| **Nova tentativa** | Repetição de uma captura, pedida pelo servidor com o motivo na tela. |
+| **`sdkUrl`** | A URL que identifica uma verificação e abre o widget. É credencial: veja [segurança](/web-sdk/seguranca). |
+| **Allowlist de origens** | As origens autorizadas a embutir o widget numa integração. Página fora dela não monta o fluxo. |
+| **Prova de vida** | A captura facial que confirma que o titular é uma pessoa presente, não uma foto ou vídeo. |
+| **Desfecho** | Como o fluxo terminou no navegador (`submitted` ou `abandoned`). Chega ao host via `onComplete` e `onCancel`. |
+| **Decisão** | O veredito da verificação (aprovada, reprovada, em análise). Nunca chega ao navegador; é entregue ao backend do integrador. |
