@@ -1,55 +1,60 @@
-# Mintlify Starter Kit
+# legitimuz-core-documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Site público de documentação da Legitimuz, construído em [Mintlify](https://mintlify.com). É o que
+o **integrador** lê para embutir o fluxo de KYC/biometria no produto dele, e o que o **analista** lê
+para operar o dashboard de compliance.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+Regras do projeto, convenções de commit e as armadilhas do preview local estão em
+**[`CLAUDE.md`](./CLAUDE.md)**. Guia de instruções por skill para agentes está em
+**[`AGENTS.md`](./AGENTS.md)**. Leia um dos dois antes de editar qualquer coisa.
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+## Stack
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+- **Site**: Mintlify — MDX + `docs.json`, sem build próprio para manter.
+- **Conteúdo**: páginas `.mdx` com frontmatter `title`/`description`, organizadas por pasta por
+  grupo de navegação (`ajuda/`, `api/`, `conceitos/`, `dashboard/`, `ia/`, `web-sdk/`).
+- **Visual**: tokens `--lz-*` do dashboard em `custom.css`, fontes Open Runde self-hosted em
+  `fonts/`, logotipo e favicon em `logo/` e `favicon.svg`.
+- **Deploy**: GitHub app da Mintlify — automático a cada push na branch default. Não há CI nem
+  revisão automática.
 
-## AI-assisted writing
+## Desenvolvimento
 
-Set up your AI coding tool to work with Mintlify:
+Instale o [Mintlify CLI](https://www.npmjs.com/package/mint):
 
 ```bash
-npx skills add https://mintlify.com/docs
-```
-
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
-
-See the [AI tools guides](/ai-tools) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
 npm i -g mint
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+Na raiz do repo, onde está o `docs.json`:
 
-```
+```bash
 mint dev
 ```
 
-View your local preview at `http://localhost:3000`.
+Preview local em `http://localhost:3000`. Antes de qualquer commit, rode a cadeia de verificação:
 
-## Publishing changes
+```bash
+mint validate && mint broken-links && mint a11y
+```
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+O `mint dev` passa em coisas que quebram em produção (case-sensitivity de asset, página não
+registrada no `docs.json`, link relativo) — a lista completa está no `CLAUDE.md`.
 
-## Need help?
+## Publicação
 
-### Troubleshooting
+O push na branch default dispara o deploy automaticamente via GitHub app da Mintlify. Não há gate
+manual: a cadeia de verificação acima é a única checagem antes de publicar.
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## Estrutura
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+```
+docs.json              # navegação, tema, cor, links, redirects
+custom.css             # tokens --lz- herdados do dashboard
+index.mdx              # entrada
+quickstart.mdx         # primeiro sucesso do integrador
+<secao>/<pagina>.mdx    # uma pasta por grupo de navegação
+docs/                   # ADRs e material interno — nunca publicado (.mintignore)
+drafts/                 # rascunho, fora do deploy
+.mintignore             # o que não é publicado
+```
