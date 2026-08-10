@@ -1,0 +1,53 @@
+@font-face {
+  font-family: "Open Runde";
+  src: url("/fonts/OpenRunde-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Open Runde";
+  src: url("/fonts/OpenRunde-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Brand */
+  --lz-brand: #fd7138;
+  --lz-brand-border: #e95619;
+  --lz-brand-logo: #fd7b46;
+
+  /* Text */
+  --lz-text-title: #161616;
+  --lz-text-strong: #171717;
+  --lz-text-secondary: #606060;
+  --lz-text-sub: #5c5c5c;
+  --lz-icon-soft: #a3a3a3;
+
+  /* Background */
+  --lz-bg: #ffffff;
+  --lz-bg-weak: #f7f7f7;
+  --lz-border: #ebebeb;
+
+  /* States */
+  --lz-success: #189050;
+  --lz-success-lighter: #def9ea;
+  --lz-error: #fb3748;
+  --lz-error-lighter: #ffebec;
+  --lz-info: #335cff;
+  --lz-info-lighter: #ebf1ff;
+  --lz-warning: #fa7319;
+  --lz-warning-lighter: #fff3eb;
+
+  /* Radius */
+  --lz-radius: 12px;
+  --lz-radius-sm: 8px;
+  --lz-radius-full: 999px;
+
+  /* Control */
+  --lz-control-height: 36px;
+  --lz-content-padding: 32px;
+}
