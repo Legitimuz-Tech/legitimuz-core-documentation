@@ -1,0 +1,98 @@
+---
+title: "Tratamento de erros"
+description: "Como os erros do Web SDK chegam ao seu código e o que cada código significa."
+---
+
+O Web SDK nunca lança exceção. Todo erro, de configuração ou do fluxo, chega ao callback `onError`
+do [`mount()`](/web-sdk/opcoes); sem `onError`, vai para `console.error`.
+
+```ts
+mount({
+  sdkUrl: "<SUA_SDK_URL>",
+  target: document.querySelector("#verificacao"),
+  onError: (error) => {
+    if (!error.recoverable) {
+      // encerre a tela e ofereça um novo começo ao titular
+    }
+  },
+});
+```
+
+## O objeto de erro
+
+| Campo          | O que é                                                                          |
+| -------------- | -------------------------------------------------------------------------------- |
+| `code`         | Código numérico do erro (a chave desta página)                                   |
+| `name`         | Nome estável do erro, em `snake_case`                                            |
+| `type`         | Categoria (`config_error`, `network_error`, `camera_error`…)                     |
+| `message`      | Descrição técnica, para o seu log                                                |
+| `user_message` | Texto que o widget mostra ao titular                                             |
+| `recoverable`  | `true` quando vale tentar de novo                                                |
+| `context`      | Detalhes específicos do erro (por exemplo, `param` no `6003` e `6004`)           |
+| `doc_url`      | Link para esta documentação                                                      |
+| `uuid`         | Identificador da ocorrência, para citar em chamados; presente nos erros `6xxx` locais |
+
+## Faixas
+
+| Faixa  | Assunto                                    |
+| ------ | ------------------------------------------ |
+| `1xxx` | Sessão                                     |
+| `2xxx` | Câmera                                     |
+| `3xxx` | Rede                                       |
+| `4xxx` | Documento                                  |
+| `5xxx` | Prova de vida                              |
+| `6xxx` | Configuração e inicialização               |
+| `7xxx` | Ação do titular                            |
+| `8xxx` | Uso interno; nunca entregue ao host        |
+| `9xxx` | Desconhecido                               |
+
+## Catálogo
+
+Erros que chegam do fluxo de verificação. A coluna de mensagem é o texto que o titular já viu na
+tela quando o erro chega ao seu código.
+
+| Código | Nome                       | Recuperável | Mensagem exibida ao titular                                        |
+| ------ | -------------------------- | ----------- | ------------------------------------------------------------------ |
+| `1001` | `session_expired`          | não         | Esta verificação expirou. Peça um novo link para continuar.        |
+| `1002` | `session_conflict`         | sim         | Algo mudou nesta verificação. Vamos recarregar para continuar.     |
+| `2001` | `camera_permission_denied` | sim         | Precisamos da câmera para continuar. Permita o acesso e tente de novo. |
+| `2002` | `camera_unavailable`       | sim         | Não encontramos uma câmera neste aparelho.                         |
+| `3001` | `network_unavailable`      | sim         | Sem conexão agora. Verifique sua internet e tente de novo.         |
+| `3002` | `timeout`                  | sim         | Isso demorou mais que o esperado. Tente de novo.                   |
+| `3003` | `server_error`             | sim         | Tivemos um problema do nosso lado. Tente de novo em instantes.     |
+| `3004` | `rate_limited`             | sim         | Muitas tentativas seguidas. Aguarde um pouco e tente de novo.      |
+| `4001` | `document_capture_failed`  | sim         | Não conseguimos capturar seu documento. Vamos tentar de novo.      |
+| `4002` | `max_retakes_reached`      | não         | Não conseguimos validar seu documento após várias tentativas.      |
+| `5001` | `liveness_failed`          | sim         | Não conseguimos concluir a prova de vida. Vamos tentar de novo.    |
+| `6001` | `config_unavailable`       | sim         | Não conseguimos carregar a verificação. Tente de novo em instantes. |
+| `6002` | `invalid_session_token`    | não         | Este link de verificação não é válido. Peça um novo link.          |
+| `6006` | `unauthorized_origin`      | não         | Esta página não está autorizada a fazer verificações.              |
+| `7001` | `user_cancelled`           | sim         | Verificação cancelada.                                             |
+| `9001` | `unknown`                  | sim         | Tivemos um problema inesperado. Tente de novo.                     |
+
+## Erros locais de configuração
+
+Três erros `6xxx` são gerados pelo próprio Web SDK, antes de o widget abrir. Eles carregam `uuid` de
+ocorrência e `doc_url`, e nenhum é recuperável sem corrigir a configuração.
+
+| Código | Nome                     | Quando acontece                                                       |
+| ------ | ------------------------ | ---------------------------------------------------------------------- |
+| `6003` | `missing_required_param` | Falta `sdkUrl` ou `target` (`context.param` diz qual)                  |
+| `6004` | `invalid_param_value`    | `sdkUrl` não é a URL absoluta esperada, ou `colorScheme` é inválido    |
+| `6005` | `sdk_not_initialized`    | O widget não sinalizou `ready` dentro de `readyTimeoutMs`              |
+
+O `6004` de `colorScheme` é o único que não bloqueia o mount: o widget abre com o tema de fallback.
+
+{/* TODO: reconciliar o recoverable do 6005 — o websdk sintetiza com false e o catálogo do
+    verification-web declara true; hoje o que chega ao host é o do websdk */}
+
+### Diagnóstico do 6005
+
+Um iframe recusado pela allowlist de origens é indistinguível de um iframe lento: o navegador
+dispara `load` normalmente e não expõe nada ao host. Por isso o `6005` traz hipóteses em vez de uma
+causa:
+
+- `context.likelyCauses` lista as causas prováveis: origem do host fora da allowlist da
+  integração, `sdkUrl` expirada ou inacessível, falha do widget ao iniciar.
+- Quando o widget respondeu com uma versão de protocolo que o pacote não fala, o erro traz
+  `context.observedProtocolVersions`. Atualize o pacote.

@@ -1,0 +1,94 @@
+---
+title: "Eventos"
+description: "O catálogo de eventos do Web SDK, os payloads e o desfecho do fluxo."
+---
+
+O widget reporta o progresso da sessão em eventos, entregues ao callback `onEvent` do
+[`mount()`](/web-sdk/opcoes):
+
+```ts
+mount({
+  sdkUrl: "<SUA_SDK_URL>",
+  target: document.querySelector("#verificacao"),
+  onEvent: (event) => {
+    // event.type: string · event.payload?: objeto
+  },
+});
+```
+
+Eventos são telemetria: use-os para analytics e para reagir na sua interface. O fim do fluxo não
+chega por aqui, e sim por `onComplete` e `onCancel`, descritos [abaixo](#desfecho-do-fluxo).
+
+## Catálogo
+
+| Evento                        | Quando dispara                                    | Payload               |
+| ----------------------------- | ------------------------------------------------- | --------------------- |
+| `session.started`             | O fluxo abriu a primeira etapa                    | —                     |
+| `session.stepTransitioned`    | O servidor trocou a etapa                         | `from`, `to`          |
+| `document.capture.started`    | O titular começou a capturar um lado do documento | `side`                |
+| `document.capture.completed`  | A captura do documento foi enviada                | `side`                |
+| `document.capture.failed`     | A captura do documento falhou                     | `side`, `code`        |
+| `selfie.capture.started`      | A captura facial começou                          | —                     |
+| `selfie.capture.completed`    | A captura facial terminou                         | —                     |
+| `liveness.completed`          | A prova de vida foi concluída                     | —                     |
+| `liveness.failed`             | A prova de vida falhou                            | `code`                |
+| `session.completed`           | O fluxo terminou                                  | `status`              |
+| `session.error`               | Um erro ocorreu na sessão                         | `code`, `recoverable` |
+| `session.abandoned`           | Reservado; o widget ainda não emite               | —                     |
+| `decision.notified`           | Reservado; o widget ainda não emite               | —                     |
+| `terms.open`                  | O widget pediu para abrir os termos de uso        | `url`                 |
+| `redirect.open`               | O widget pediu um redirect pós-fluxo              | `url`                 |
+
+Os campos `from` e `to` carregam identificadores de etapa: são rótulos de telemetria, não um
+contrato para ramificar comportamento. Os campos `code` carregam um
+[código de erro](/web-sdk/erros).
+
+Para abrir as URLs de `terms.open` e `redirect.open`, prefira o callback `onOpenUrl`: ele recebe a
+URL já validada e deduplicada, e substitui a abertura default.
+
+## Modelo evergreen
+
+O widget pode emitir tipos de evento que a sua versão do pacote ainda não conhece: eles passam pelo
+`onEvent` normalmente, em vez de serem descartados. Se você liga o `onEvent` direto num pipeline de
+analytics e não quer cardinalidade nova aparecendo sozinha, congele o conjunto com
+`eventsAllowlist`.
+
+<Note>
+  `eventsAllowlist: []` silencia todos os eventos. Lista vazia significa que nada passa; para
+  deixar tudo passar, omita a opção.
+</Note>
+
+## Desfecho do fluxo
+
+O desfecho chega por dois callbacks próprios, fora do catálogo de eventos. `onComplete` dispara
+quando o widget declara fim de fluxo: `result.status` é `"submitted"` (o titular enviou tudo) ou
+`"abandoned"` (o fluxo terminou sem envio). `onCancel` dispara quando o widget declara
+cancelamento, e `result.sessionId` identifica a sessão quando disponível.
+
+Terminar não é ser aprovado: a decisão da verificação chega ao seu backend, nunca ao navegador. E a
+régua entre os dois callbacks é a origem da declaração, não o resultado, então um abandono pode
+chegar pelos dois canais. Antes de contabilizar conversão, cheque sempre `result.status`. Contar
+`"abandoned"` como sucesso infla a métrica.
+
+## Eventos DOM
+
+Cada sinal também é despachado como `CustomEvent` no elemento `<legitimuz-websdk>` que o `mount()`
+cria. É útil em HTML puro e em frameworks que escutam eventos direto no template:
+
+| Evento DOM           | Equivalente        |
+| -------------------- | ------------------ |
+| `legitimuz-ready`    | `onReady`          |
+| `legitimuz-event`    | `onEvent`          |
+| `legitimuz-complete` | `onComplete`       |
+| `legitimuz-cancel`   | `onCancel`         |
+| `legitimuz-error`    | `onError`          |
+
+```js
+const widget = document.querySelector("legitimuz-websdk");
+
+widget.addEventListener("legitimuz-event", (event) => {
+  console.log(event.detail.type);
+});
+```
+
+Os eventos não borbulham e não atravessam shadow DOM: escute no próprio elemento.

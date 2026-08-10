@@ -1,0 +1,116 @@
+---
+title: "Opções do mount()"
+description: "Referência completa das opções do mount() do Web SDK, com os valores default."
+---
+
+```ts
+import { mount } from "@legitimuz/websdk";
+
+const handle = mount(options);
+```
+
+Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
+
+## Opções
+
+<ParamField path="sdkUrl" type="string" required>
+  URL emitida pelo servidor da Legitimuz para uma verificação. Precisa ser absoluta e apontar para a
+  origem do widget: qualquer outro valor gera o erro `6004`. Trate-a como credencial, sem registrar
+  em log nem enviar para ferramentas de analytics. Veja [segurança](/web-sdk/seguranca).
+</ParamField>
+
+<ParamField path="target" type="HTMLElement" required>
+  Elemento onde o widget renderiza. O iframe ocupa 100% da altura do container, então dê altura a
+  ele. Ausente, o `mount()` reporta `6003` e nada é montado.
+</ParamField>
+
+<ParamField path="colorScheme" type='"light" | "dark" | "auto"' default="auto">
+  Tema do widget. Com `"auto"`, o SDK resolve para claro ou escuro pela preferência do navegador no
+  momento do mount. Valor inválido gera `6004`, mas não bloqueia: o widget abre com o fallback.
+</ParamField>
+
+<ParamField path="locale" type="string" default="navigator.language">
+  Idioma do widget. Sem a opção, vale o idioma do navegador; sem navegador identificável, `pt-BR`.
+  O widget suporta `pt-BR` e `en`, resolve por prefixo (`en-US` vira `en`) e cai para `pt-BR` quando
+  não reconhece o valor.
+</ParamField>
+
+<ParamField path="iframeTitle" type="string" default="Verificação de identidade">
+  Rótulo acessível do iframe, anunciado por leitores de tela. Sobrescreva quando o contexto da sua
+  página pedir um texto mais específico.
+</ParamField>
+
+<ParamField path="readyTimeoutMs" type="number" default="15000">
+  Quanto esperar pelo sinal `ready` do widget antes de reportar `6005` via `onError`. `0` ou
+  `Infinity` desligam o diagnóstico.
+</ParamField>
+
+<ParamField path="sandboxScenario" type="string">
+  Reservado para o ambiente de testes.
+  {/* TODO: documentar quando o sandbox existir — hoje o parâmetro não tem consumidor no
+      verification-web */}
+</ParamField>
+
+<ParamField path="onReady" type="() => void">
+  O widget carregou e a primeira tela está visível. O mesmo sinal existe em formato aguardável no
+  handle, como a promise `ready`.
+</ParamField>
+
+<ParamField path="onEvent" type="(event) => void">
+  Eventos de progresso da sessão. O catálogo completo está em [eventos](/web-sdk/eventos).
+</ParamField>
+
+<ParamField path="eventsAllowlist" type="string[]">
+  Filtra o que chega em `onEvent` e no evento DOM `legitimuz-event`. Sem a opção, tudo passa,
+  inclusive tipos de evento que a sua versão do pacote ainda não conhece. Lista vazia silencia
+  todos os eventos. Não afeta `onComplete`, `onCancel` nem `onError`.
+</ParamField>
+
+<ParamField path="onOpenUrl" type="(request) => void">
+  Substitui a abertura default de URLs que o widget pede para abrir do lado do host (termos de uso e
+  redirect pós-fluxo). Sem a opção, o SDK abre com `window.open(url, "_blank",
+  "noopener,noreferrer")`. O callback só recebe URL `http(s)` já validada e deduplicada;
+  `request.reason` distingue `terms.open` de `redirect.open`.
+</ParamField>
+
+<ParamField path="onComplete" type="(result) => void">
+  O fluxo terminou. `result.status` é `"submitted"` ou `"abandoned"`, e terminar não significa
+  aprovado nem concluído com sucesso. Veja [eventos](/web-sdk/eventos#desfecho-do-fluxo).
+</ParamField>
+
+<ParamField path="onCancel" type="(result) => void">
+  O widget declarou cancelamento. `result.sessionId` identifica a sessão, quando disponível. Para
+  retomar, chame `mount()` de novo; quem resolve o estado é o servidor.
+</ParamField>
+
+<ParamField path="onError" type="(error) => void">
+  Erros de configuração e do fluxo. O SDK nunca lança exceção: sem `onError`, os erros vão para
+  `console.error`. Veja [tratamento de erros](/web-sdk/erros).
+</ParamField>
+
+## O handle
+
+`mount()` retorna um handle com dois membros:
+
+<ResponseField name="destroy()" type="() => void">
+  Remove o widget da página e encerra a comunicação. Chame ao desmontar a tela.
+</ResponseField>
+
+<ResponseField name="ready" type="Promise<void>">
+  Resolve quando o widget sinaliza `ready` (o mesmo sinal do `onReady`). Rejeita com o erro `6003`
+  ou `6004` quando a configuração impede criar o iframe, com `6005` quando o `ready` não chega
+  dentro de `readyTimeoutMs`, e com `DOMException` de nome `AbortError` quando `destroy()` é chamado
+  antes do `ready`.
+</ResponseField>
+
+## Utilitário: isValidCPF
+
+O pacote exporta um validador de CPF para o formulário que antecede a verificação:
+
+```ts
+import { isValidCPF } from "@legitimuz/websdk";
+
+isValidCPF("000.000.000-00"); // false: dígito verificador inválido
+```
+
+Quem quer só o validador, sem o widget, importa do subpath `@legitimuz/websdk/cpf`.

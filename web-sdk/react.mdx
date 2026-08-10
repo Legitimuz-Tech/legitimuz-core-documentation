@@ -1,0 +1,68 @@
+---
+title: "Usar com React"
+description: "Integre o fluxo de verificação em apps React com o @legitimuz/websdk-react."
+---
+
+O pacote `@legitimuz/websdk-react` embrulha o `mount()` do Web SDK em um hook e um componente, com o
+ciclo de vida já resolvido: montagem no lugar certo, `destroy()` no desmonte e callbacks sempre na
+versão mais recente.
+
+## Instalação
+
+```bash
+npm install @legitimuz/websdk @legitimuz/websdk-react
+```
+
+O core `@legitimuz/websdk` é peer dependency do wrapper: instale os dois.
+
+## Componente
+
+`LegitimuzWidget` renderiza o container e monta o widget nele. Dê altura ao elemento pai: o iframe
+ocupa 100% do container e, sem altura, o widget existe no DOM e não aparece.
+
+```tsx
+import { LegitimuzWidget } from "@legitimuz/websdk-react";
+
+export function Verificacao() {
+  return (
+    <div style={{ height: 640 }}>
+      <LegitimuzWidget
+        sdkUrl="<SUA_SDK_URL>"
+        onComplete={(result) => {
+          // o fluxo terminou; cheque result.status antes de tratar como sucesso
+        }}
+      />
+    </div>
+  );
+}
+```
+
+As props são as mesmas [opções do `mount()`](/web-sdk/opcoes), menos `target`: o container pertence
+ao componente.
+
+## Hook
+
+`useLegitimuz` devolve o `ref` do container, para quando você quer controlar o elemento:
+
+```tsx
+import { useLegitimuz } from "@legitimuz/websdk-react";
+
+export function Verificacao() {
+  const containerRef = useLegitimuz({
+    sdkUrl: "<SUA_SDK_URL>",
+    onEvent: (event) => console.log(event.type),
+  });
+
+  return <div ref={containerRef} style={{ height: 640 }} />;
+}
+```
+
+## Comportamento
+
+- O módulo tem a diretiva `"use client"`. No App Router do Next.js, importe-o apenas de Client
+  Components.
+- O widget remonta somente quando `sdkUrl` muda. Trocar `colorScheme` ou `locale` depois do
+  mount não tem efeito: remontar destruiria a sessão de verificação em andamento.
+- Os callbacks seguem sempre a última versão: você pode passar closures novas a cada render sem
+  causar remontagem.
+- No desmonte do componente, o wrapper chama `destroy()` por você.

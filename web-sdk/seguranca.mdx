@@ -1,0 +1,62 @@
+---
+title: "Segurança"
+description: "CSP, isolamento do iframe, comunicação travada por origem e o cuidado com a sdkUrl."
+---
+
+O widget roda isolado num iframe e só conversa com páginas autorizadas. Esta página cobre o que a
+sua página precisa permitir, o que o SDK impõe por conta própria e o que fica sob a sua
+responsabilidade.
+
+## CSP da sua página
+
+Se o seu site define Content Security Policy, libere as duas origens do produto:
+
+```text
+script-src  https://embed.legitimuz.com;
+frame-src   https://verify.legitimuz.com;
+```
+
+Instalando via npm, a entrada de `script-src` para o CDN não é necessária.
+
+{/* TODO: confirmar a URL de CDN embed.legitimuz.com — o deploy do CDN ainda não está ativo no
+    legitimuz-core-websdk */}
+
+## O que o SDK impõe no iframe
+
+O iframe pede apenas as permissões que o fluxo de captura usa: `camera`, `microphone`,
+`geolocation` e `fullscreen`. O atributo `sandbox` (`allow-scripts allow-same-origin allow-forms`)
+impede o conteúdo de navegar a sua página ou abrir popups por conta própria. O iframe é criado com
+`referrerPolicy: "no-referrer"`, então a URL da sua página não vaza para o widget.
+
+O destino do iframe é constante do build do SDK. Uma `sdkUrl` apontando para qualquer outra origem
+é recusada com o erro `6004`, antes de qualquer rede.
+
+## Comunicação travada por origem
+
+Host e embed conversam por `postMessage` com um handshake no início: o embed confere a origem da sua
+página contra a allowlist da integração e, só depois de travar essa origem, começa a enviar
+mensagens, sempre endereçadas a ela e nunca a `*`. Página fora da allowlist não recebe nada; do lado
+do host, isso aparece como o erro `6005`, porque o navegador não expõe a recusa.
+
+A mesma allowlist alimenta o `frame-ancestors` do embed. É uma lista só, e ela autoriza tanto o
+embed quanto a conversa.
+
+## A sdkUrl é credencial
+
+A `sdkUrl` dá acesso à verificação de uma pessoa real. Ela vale por tempo limitado, mas enquanto
+vale, quem a tem entra no fluxo.
+
+<Warning>
+  Não registre a `sdkUrl` em log, não a persista, não a coloque em URL da sua página e não a envie
+  para analytics ou tag manager. O próprio SDK, ao reportar erros, remove a parte sensível da URL.
+  Faça o mesmo em qualquer telemetria sua.
+</Warning>
+
+## Dado do titular
+
+O fluxo foi desenhado para o dado do titular não passar pela sua página: captura e envio acontecem
+dentro do iframe, direto com o servidor da Legitimuz. Os eventos que o SDK entrega ao host carregam
+identificadores e códigos, não dados pessoais. Mantenha assim:
+
+- Não tente capturar a tela do widget nem interceptar o tráfego dele.
+- Não anexe dados do titular (CPF, nome) aos eventos que você repassa para analytics.
