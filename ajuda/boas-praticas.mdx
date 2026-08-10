@@ -1,0 +1,45 @@
+---
+title: "Boas práticas de integração"
+description: "O que separa uma integração do Web SDK que funciona de uma que gera chamados."
+---
+
+Nenhum item abaixo é obrigatório para o fluxo abrir. Todos evitam um problema que só aparece
+depois, em produção.
+
+## Ciclo de vida
+
+- Chame `destroy()` ao remover o widget da página. Sem isso, listeners e iframe ficam para trás.
+  No React, o wrapper faz isso por você no desmonte.
+- Monte uma vez por verificação. Não remonte para trocar tema ou idioma: remontar destrói a sessão
+  em andamento e o titular recomeça do zero.
+- Dê altura ao container antes do mount. Isso evita layout shift quando o iframe carrega e evita o
+  falso "não carregou" de um container sem altura.
+
+## Métricas e eventos
+
+- Cheque `result.status` antes de contar conversão. `onComplete` significa que o fluxo terminou, e
+  `"abandoned"` é um desfecho legítimo. Contar abandono como sucesso infla a métrica.
+- Congele o conjunto de eventos em pipelines de analytics. O widget pode emitir tipos novos sem
+  você atualizar o pacote (modelo evergreen); se cardinalidade nova quebra o seu pipeline, fixe os
+  tipos com `eventsAllowlist`.
+- Não anexe dados do titular aos eventos que você repassa a terceiros. Os payloads carregam
+  identificadores e códigos de propósito.
+
+## Credenciais e segurança
+
+- Trate a `sdkUrl` como segredo: não a registre em log nem em storage, não a coloque na query
+  string da sua página e não a envie para analytics ou tag manager. Veja
+  [segurança](/web-sdk/seguranca).
+- Se o seu site usa Content Security Policy, declare o mínimo que o widget precisa e nada além
+  dele: o `frame-src` do widget e, quando o SDK vier do CDN, o `script-src` correspondente.
+- Registre na integração todas as origens que vão embutir o widget, inclusive as de homologação.
+  Origem fora da lista aparece para você como `6005`, sem detalhe no navegador.
+
+## Tratamento de erros
+
+- Ramifique por `recoverable`, não por código. Para os recuperáveis, o widget já orienta o titular;
+  reserve a sua lógica para encerrar a tela nos não recuperáveis. Trate códigos específicos só
+  quando a sua interface tem algo a acrescentar.
+- Registre `code` e `uuid` no seu error tracker. O `uuid` identifica a ocorrência exata e
+  transforma "deu 6005" num chamado rastreável. O próprio SDK já remove a parte sensível da
+  `sdkUrl` do contexto dos erros que reporta.

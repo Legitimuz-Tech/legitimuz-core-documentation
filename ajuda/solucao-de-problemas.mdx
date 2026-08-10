@@ -1,0 +1,55 @@
+---
+title: "Solução de problemas"
+description: "Diagnóstico dos problemas mais comuns na integração do Web SDK."
+---
+
+Cada seção abaixo parte do sintoma. Para o significado de um código específico, consulte o
+[catálogo de erros](/web-sdk/erros).
+
+## O widget não aparece
+
+Na ordem em que costuma ser:
+
+1. O container não tem altura. O iframe ocupa 100% do elemento `target`; sem altura, o widget
+   existe no DOM e não aparece. Dê altura ao container (e, no React, ao pai do componente).
+2. O `onError` recebeu `6005`. O widget não sinalizou `ready`: a origem da sua página está fora
+   da allowlist da integração, ou a `sdkUrl` expirou ou está inacessível. O navegador não distingue
+   os casos para o host, então confira as hipóteses em `context.likelyCauses`.
+3. A CSP da sua página bloqueou o iframe. Se o seu site define Content Security Policy, libere
+   `frame-src https://verify.legitimuz.com`. Veja [segurança](/web-sdk/seguranca).
+4. O `onError` recebeu `6003` ou `6004`. É configuração: falta `sdkUrl` ou `target`, ou a
+   `sdkUrl` não é a URL absoluta esperada. `context.param` aponta a opção.
+
+## A câmera não abre
+
+- O titular negou a permissão (erro `2001`). O widget orienta a tentativa seguinte; a permissão é
+  do navegador, e a sua página não consegue concedê-la pelo titular.
+- A sua página restringe a câmera. Se o seu site envia o header `Permissions-Policy`, a política
+  não pode negar `camera` para a origem do widget, senão o pedido do iframe é recusado antes de
+  chegar ao titular.
+- O aparelho não tem câmera utilizável (erro `2002`).
+
+## Os eventos não chegam
+
+- `eventsAllowlist` está vazio. Lista vazia silencia todos os eventos, o que é diferente de não
+  passar a opção. Remova a opção ou liste os tipos que você quer.
+- O listener está no lugar errado. Os [eventos DOM](/web-sdk/eventos#eventos-dom) não borbulham:
+  escute no próprio elemento `<legitimuz-websdk>`, não em um ancestral.
+- Você espera o desfecho em `onEvent`. O fim do fluxo chega por `onComplete` e `onCancel`, não
+  pelo catálogo de eventos.
+
+## No React, o widget some ou reinicia
+
+- O pai perdeu a altura. `LegitimuzWidget` renderiza um `div` que ocupa o pai; se o layout recolhe
+  o pai, o widget desaparece sem erro.
+- O componente desmontou. O wrapper chama `destroy()` no desmonte, e um remount do componente
+  reinicia o widget. Mantenha o componente montado durante o fluxo inteiro.
+- A `sdkUrl` mudou. É a única prop que causa remontagem, então não gere uma URL nova por render.
+- O build do Next.js quebra apontando para hooks: o pacote é client-only. Importe-o apenas de
+  Client Components.
+
+## Ainda travado?
+
+Ao abrir um chamado, envie o `code` e o `uuid` do erro (quando houver): o `uuid` identifica a
+ocorrência exata nos nossos registros.
+{/* TODO: confirmar o canal público de suporte antes de linká-lo aqui */}

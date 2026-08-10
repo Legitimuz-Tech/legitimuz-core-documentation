@@ -1,0 +1,60 @@
+---
+title: "Perguntas frequentes"
+description: "As dúvidas mais comuns de quem integra o fluxo de verificação da Legitimuz."
+---
+
+<AccordionGroup>
+  <Accordion title="Quais frameworks são suportados?">
+    Todos. O `mount()` é agnóstico: precisa só de um elemento para renderizar. Para React existe o
+    wrapper [`@legitimuz/websdk-react`](/web-sdk/react); em Vue, Svelte e Angular, use o pacote npm
+    e os [eventos DOM](/web-sdk/eventos#eventos-dom) quando quiser escutar no template.
+  </Accordion>
+  <Accordion title="Existe SDK nativo para iOS e Android?">
+    Hoje, não: a integração é web. Quando os SDKs nativos existirem, esta documentação passa a
+    cobri-los.
+  </Accordion>
+  <Accordion title="Posso abrir o widget dentro de um modal?">
+    Sim. O widget renderiza no elemento que você passar em `target`, seja dentro de um modal, de
+    uma rota ou de qualquer container. Garanta altura ao container: o iframe ocupa 100% dele.
+  </Accordion>
+  <Accordion title="Posso apontar um iframe meu direto para verify.legitimuz.com?">
+    Não. A comunicação entre a sua página e o widget passa por um handshake do Web SDK. Um iframe
+    manual até renderiza para origens autorizadas, mas você não recebe eventos, desfecho nem erros.
+    Use o `mount()`.
+  </Accordion>
+  <Accordion title="O onComplete disparou. O titular foi aprovado?">
+    Não necessariamente, e não é isso que ele diz. `onComplete` informa que o fluxo terminou no
+    navegador, e `result.status` pode ser `"abandoned"`. A decisão da verificação (aprovada,
+    reprovada, em análise) nunca chega ao navegador: ela é entregue ao seu backend. Veja
+    [como a verificação funciona](/conceitos/como-funciona).
+  </Accordion>
+  <Accordion title="Como o meu sistema recebe a decisão da verificação?">
+    No seu backend, fora do navegador: a página do titular não é lugar para o resultado.
+    {/* TODO: linkar a página de webhooks quando o disparo estiver disponível */}
+  </Accordion>
+  <Accordion title="Quais idiomas o widget fala?">
+    Português do Brasil e inglês. O idioma vem da opção `locale` do `mount()`, e valores não
+    suportados caem para `pt-BR`. Veja o [fluxo do titular](/conceitos/fluxo-do-titular#idioma).
+  </Accordion>
+  <Accordion title="O widget acompanha o tema escuro do meu site?">
+    Sim, pela opção `colorScheme` do `mount()`: passe `"light"`, `"dark"`, ou deixe o default
+    `"auto"` resolver pela preferência do navegador no momento do mount. Trocar o tema depois do
+    mount não remonta o widget, porque remontar destruiria a sessão em andamento.
+  </Accordion>
+  <Accordion title="Preciso pedir permissão de câmera antes de montar o widget?">
+    Não. O próprio fluxo pede a permissão ao titular na etapa de captura. A sua página precisa
+    apenas não bloquear: se ela define o header `Permissions-Policy`, a política não pode negar
+    `camera` para a origem do widget.
+  </Accordion>
+  <Accordion title="A sdkUrl pode ir para o meu log ou analytics?">
+    Não: ela é credencial de uma verificação de uma pessoa real. Não registre em log, não persista
+    e não envie a tag manager. Veja [segurança](/web-sdk/seguranca#a-sdkurl-e-credencial).
+  </Accordion>
+  <Accordion title="Um erro é recuperável. O que eu faço?">
+    `recoverable: true` significa que vale tentar de novo, e o widget já orienta o titular na tela.
+    Reserve a sua reação para os não recuperáveis: encerre a tela e ofereça um novo começo. O
+    catálogo completo está em [tratamento de erros](/web-sdk/erros).
+  </Accordion>
+</AccordionGroup>
+
+Não achou a resposta? Veja a [solução de problemas](/ajuda/solucao-de-problemas).
