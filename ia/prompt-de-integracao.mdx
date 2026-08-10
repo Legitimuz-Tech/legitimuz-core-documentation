@@ -1,0 +1,57 @@
+---
+title: "Prompt de integração"
+description: "Um prompt pronto para o seu agente de IA integrar o Web SDK da Legitimuz."
+---
+
+Se você integra com um agente de codificação (Claude Code, Cursor, Copilot), cole o prompt abaixo
+nele. O prompt aponta para as páginas canônicas desta documentação e carrega as regras que um agente
+costuma pular: o tratamento do desfecho, a higiene da `sdkUrl` e o diagnóstico do erro `6005`.
+
+````text
+Integre o fluxo de verificação de identidade da Legitimuz neste projeto usando o Web SDK.
+
+Documentação canônica: https://docs.legitimuz.com. Leia /quickstart, /web-sdk/opcoes,
+/web-sdk/eventos, /web-sdk/erros e /web-sdk/seguranca antes de escrever código. O índice
+para agentes está em https://docs.legitimuz.com/llms.txt. Não use nome de opção, evento
+ou código de erro que não esteja nessas páginas.
+
+Faça nesta ordem:
+
+1. Instale o pacote: `npm install @legitimuz/websdk`. Em projeto React ou Next.js,
+   instale também `@legitimuz/websdk-react` e use `LegitimuzWidget` ou `useLegitimuz`
+   (client-only) em vez de chamar `mount()` manualmente.
+2. Crie um container com altura explícita: o iframe do widget ocupa 100% do container,
+   e sem altura ele não aparece.
+3. Monte o fluxo com `mount({ sdkUrl, target, onComplete, onError })`.
+4. A `sdkUrl` vem do backend do projeto. Nunca a gere no cliente, nunca a registre em
+   log e nunca a envie para analytics ou tag manager, porque ela é credencial de uma
+   verificação.
+5. Em `onComplete`, ramifique por `result.status`: `"submitted"` é envio concluído;
+   `"abandoned"` não é sucesso e não pode contar como conversão. A decisão da
+   verificação (aprovada/reprovada) não chega ao navegador.
+6. Em `onError`, ramifique por `error.recoverable`: `true` → o widget já orienta o
+   titular, apenas registre; `false` → encerre a tela e ofereça recomeçar. Registre
+   `error.code` e `error.uuid`, nunca o objeto inteiro.
+7. Se o site define Content Security Policy, acrescente
+   `frame-src https://verify.legitimuz.com` (e `script-src https://embed.legitimuz.com`
+   quando o SDK vier do CDN).
+
+Restrições:
+- Monte uma vez por verificação; não remonte para trocar tema ou idioma.
+- Chame `handle.destroy()` ao remover o widget da página (no React o wrapper já faz).
+- Não intercepte o tráfego do iframe nem anexe dados pessoais do titular aos eventos.
+
+Verificação final: a tela de boas-vindas aparece dentro do container e `onReady`
+dispara. Se nada aparecer em 15 segundos e `onError` receber o código 6005, a origem da
+página não está na allowlist da integração ou a `sdkUrl` expirou. Confira
+`context.likelyCauses`.
+````
+
+O prompt é autossuficiente para o caminho feliz. Duas coisas continuam sendo suas:
+
+- A emissão da `sdkUrl` no seu backend: veja a [visão geral da API](/api/visao-geral).
+- A allowlist de origens da integração, que precisa incluir a página onde o widget vai rodar.
+
+<Card title="Servidor MCP" icon="plug" href="/ia/mcp">
+  Conecte esta documentação direto ao seu agente, sem copiar e colar.
+</Card>

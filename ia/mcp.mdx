@@ -1,0 +1,45 @@
+---
+title: "Servidor MCP"
+description: "Conecte esta documentação ao seu agente de IA via Model Context Protocol."
+---
+
+Esta documentação expõe um servidor MCP: o seu agente busca e lê as páginas daqui de dentro do
+editor, em vez de depender do que ele acha que sabe sobre o Web SDK.
+
+{/* TODO: confirmar o endpoint /mcp depois do deploy no domínio docs.legitimuz.com */}
+
+## Conectar
+
+<CodeGroup>
+
+```bash Claude Code
+claude mcp add --transport http legitimuz-docs https://docs.legitimuz.com/mcp
+```
+
+```json Cursor e outros clientes
+{
+  "mcpServers": {
+    "legitimuz-docs": {
+      "url": "https://docs.legitimuz.com/mcp"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+Conectado, o agente ganha a busca nesta documentação como ferramenta. Pergunte pelo nome exato de
+uma opção do `mount()` ou por um código de erro e ele responde com a página canônica.
+
+## Sem MCP
+
+Duas alternativas que não pedem configuração:
+
+- O `llms.txt`, índice desta documentação para agentes, em
+  `https://docs.legitimuz.com/llms.txt`: cole a URL no contexto do seu agente.
+- O menu contextual de cada página: o botão no topo copia a página em Markdown ou a abre direto no
+  Claude, no ChatGPT ou no seu editor.
+
+<Card title="Prompt de integração" icon="wand-sparkles" href="/ia/prompt-de-integracao">
+  O prompt pronto para o agente integrar o Web SDK de ponta a ponta.
+</Card>
