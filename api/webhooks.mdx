@@ -1,0 +1,56 @@
+---
+title: "Webhooks"
+description: "Receba a decisão das verificações no seu backend, com entrega assinada e rastreável."
+tag: "Em breve"
+---
+
+A decisão de uma verificação nunca chega ao navegador: ela é entregue ao seu backend por webhook.
+Você registra destinos (uma URL e a lista de eventos que ela recebe) e trata as entregas.
+
+<Info>
+  O disparo de webhooks está em implementação. O modelo de destinos e entregas abaixo já é o
+  definitivo; o catálogo de eventos e o esquema de assinatura serão publicados quando fecharem.
+</Info>
+
+## Destinos
+
+Um destino é uma URL HTTPS mais a lista de eventos que ela assina. Na criação, você recebe o
+segredo de assinatura do destino uma única vez, como a chave de API. Guarde-o para conferir as
+entregas.
+
+O destino pode estar ativo ou pausado, e você alterna entre os dois. O terceiro estado, falhando, é
+veredito do sistema sobre as entregas: ele existe para você perceber um endpoint quebrado, não para
+ser declarado.
+
+## Eventos
+
+O vocabulário de eventos está em fechamento. Os dois primeiros são o resultado de verificação e a
+decisão de casos em revisão manual.
+
+{/* TODO: publicar o catálogo quando o backend fechar o enum — hoje os nomes verification.updated e
+    case.decided aparecem no repo apenas como exemplo */}
+
+## Entregas
+
+Cada tentativa de entrega fica registrada com dois campos separados de propósito: o código HTTP
+que o seu endpoint devolveu, e o status lógico da entrega (pendente, entregue ou falha). O código
+registra o que o seu endpoint respondeu naquela tentativa; o status diz se a entrega foi concluída,
+considerando as novas tentativas.
+
+Responda `2xx` rápido e processe o payload de forma assíncrona: o veredito de entrega é sobre a
+recepção, não sobre o seu processamento.
+
+## Assinatura
+
+Toda entrega é assinada com o segredo do destino, para o seu backend rejeitar chamadas que não
+vieram da Legitimuz.
+
+{/* TODO: publicar header, algoritmo e exemplo de verificação quando o worker de disparo existir —
+    não documentar X-Legitimuz-Signature antes disso (hoje só existe em mockup de UI) */}
+
+## Boas práticas
+
+- Deduplique por evento, não por chegada: novas tentativas reenviam o mesmo evento.
+- Não confie em ordem de chegada entre eventos diferentes.
+- Valide a assinatura antes de ler o payload. Endpoint de webhook sem validação é uma porta para
+  decisão forjada.

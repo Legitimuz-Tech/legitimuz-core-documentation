@@ -1,0 +1,48 @@
+---
+title: "Autenticação"
+description: "A chave de API: formato, escopo, ciclo de vida e rotação sem downtime."
+tag: "Em breve"
+---
+
+Toda chamada do seu backend à API leva uma chave de API no header `x-api-key`. A chave identifica a
+sua conta e a integração: você não informa nenhum dos dois no corpo da requisição, e um
+identificador divergente do escopo da chave é recusado.
+
+<Info>
+  O autenticador por `x-api-key` entra em produção junto com a criação de verificações pela API.
+  O formato e o ciclo de vida abaixo já são os definitivos.
+</Info>
+
+## Formato
+
+```text
+lz_XXXXXXXX_<SEGREDO>
+```
+
+O prefixo `lz_` mais oito caracteres é a parte pública da chave: aparece nas telas e nos logs para
+você identificar qual chave é qual, e não deriva do segredo. A chave completa aparece uma única
+vez, na criação. Guarde-a num cofre de segredos, porque a Legitimuz armazena apenas um hash e não
+consegue exibi-la de novo.
+
+## Escopo e ciclo de vida
+
+- Uma chave pertence a uma integração e carrega as permissões definidas na criação.
+- O status é derivado, nunca editado: ativa, expirada (pela validade) ou revogada.
+- Validade default de 1 ano, máximo de 2. Até 10 chaves vivas por integração.
+
+## Rotação
+
+A rotação emite uma chave nova e encurta a validade da antiga para um período de carência, então as
+duas convivem durante a troca, sem downtime:
+
+- Carência default de 24 horas, máximo de 7 dias.
+- Carência `0` revoga a antiga na hora.
+- A rotação nunca estende a validade da chave antiga.
+
+<Warning>
+  Chave de API exposta, seja em repositório, log ou ticket, precisa ser revogada ou rotacionada com
+  carência `0`. Apagar o registro do lugar onde vazou não desfaz a exposição.
+</Warning>
+
+{/* TODO: confirmar a URL base da API e publicar o exemplo de requisição quando o autenticador
+    (DD-17, Fase 2) entrar em produção */}

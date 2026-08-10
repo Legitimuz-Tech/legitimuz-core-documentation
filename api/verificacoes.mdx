@@ -1,0 +1,62 @@
+---
+title: "Criar verificações"
+description: "A porta única de criação de verificações, a idempotência e a allowlist de origens."
+tag: "Em breve"
+---
+
+Existe uma porta de criação, e é só uma: o seu backend chama o endpoint de criação com a
+[chave de API](/api/autenticacao) e recebe a `sdkUrl` da verificação. Não há criação pelo
+navegador, por link genérico nem por credencial no corpo.
+
+<Info>
+  O endpoint está em fase final de implementação. A semântica abaixo é a decidida; o corpo da
+  requisição e a resposta serão publicados quando o contrato fechar.
+  {/* TODO: publicar método, path, body e response do get-sdk-url quando a Fase 3 da DD-17 fechar */}
+</Info>
+
+## A resposta é a sdkUrl
+
+A `sdkUrl` identifica uma única verificação e é a credencial dela:
+
+- Vale por tempo limitado. Verificação expirada ou já decidida recusa qualquer mutação.
+- O escopo é o próprio fluxo: a URL não lista, não consulta e não alcança outras verificações.
+- Entregue-a ao seu front-end e monte o widget. Veja a [visão geral da API](/api/visao-geral) e o
+  [quickstart](/quickstart).
+
+## Idempotência
+
+A criação aceita um identificador de referência seu (`ref_id`) e trata repetição de forma
+previsível. Uma requisição repetida, com o mesmo `ref_id` e o mesmo payload, devolve `200` com a
+verificação existente, não uma segunda. O mesmo `ref_id` com payload diferente devolve `409`: uma
+verificação nova exige um `ref_id` novo.
+
+Nova tentativa para o mesmo titular é uma decisão sua: crie outra verificação. Não existe clonagem
+nem reativação pelo navegador.
+
+## Allowlist de origens
+
+O widget só monta em páginas cuja origem está registrada na integração, a mesma allowlist descrita
+em [segurança](/web-sdk/seguranca). O registro tem verificação de posse:
+
+1. Cadastre a origem na integração. Ela nasce pendente.
+2. Publique o token de verificação como registro DNS TXT do domínio.
+3. A origem passa a verificada após a conferência. Origem pendente não autoriza nada.
+
+Registre todas as origens que vão embutir o widget, inclusive as de homologação, antes de ir para
+produção.
+
+## Erros
+
+A API responde com o código HTTP correto, sem erro de negócio disfarçado de sucesso:
+
+| Código | Significado |
+| --- | --- |
+| `400` | Requisição inválida (por exemplo, identificador divergente do escopo da chave) |
+| `401` | Credencial ausente, inválida ou expirada |
+| `403` | A chave não tem a permissão necessária |
+| `404` | Recurso fora do escopo da chave; a existência não é confirmada |
+| `409` | `ref_id` já usado com payload diferente |
+| `422` | Recusado por regra de negócio, com o motivo em código |
+
+{/* TODO: publicar o envelope de erro ({error: {code, message}}) com exemplos quando o contrato
+    fechar */}
