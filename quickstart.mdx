@@ -1,47 +1,101 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Instale o @legitimuz/websdk e abra o primeiro fluxo de verificação na sua página."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+Ao final deste guia, o fluxo de verificação abre dentro da sua página e os eventos da sessão chegam
+ao seu código.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+## Pré-requisitos
 
-## Prerequisites
+- Uma `sdkUrl` válida. Ela identifica uma verificação, é emitida pelo servidor da Legitimuz e vale
+  por tempo limitado. Trate-a como credencial.
+  {/* TODO: documentar a emissão da sdkUrl quando o endpoint get-sdk-url (DD-17, Fase 2) for público */}
+- Node.js 18 ou superior e npm, se for instalar via pacote.
 
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Abra o primeiro fluxo
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Instale o Web SDK">
+    <CodeGroup>
 
-    ```bash
-    npm install your-package
+    ```bash npm
+    npm install @legitimuz/websdk
+    ```
+
+    ```html CDN
+    <script src="https://embed.legitimuz.com/v1/websdk.js"></script>
+    ```
+
+    </CodeGroup>
+
+    {/* TODO: confirmar a URL de CDN — hoje ela só existe no README do legitimuz-core-websdk e o
+        workflow de deploy do CDN está desabilitado */}
+
+    Pelo CDN, o SDK fica disponível como `window.Legitimuz`, com a mesma API do pacote npm.
+  </Step>
+  <Step title="Reserve o container">
+    O widget renderiza dentro de um elemento seu e ocupa 100% da altura dele. Sem altura, o widget
+    existe na página e não aparece.
+
+    ```html
+    <div id="verificacao" style="height: 640px"></div>
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+  <Step title="Monte o fluxo">
+    ```ts
+    import { mount } from "@legitimuz/websdk";
 
-    ```bash
-    your-cli init
+    const handle = mount({
+      sdkUrl: "<SUA_SDK_URL>",
+      target: document.querySelector("#verificacao"),
+      onReady: () => {
+        // o widget carregou e a primeira tela está visível
+      },
+      onComplete: (result) => {
+        // o fluxo terminou; cheque result.status antes de tratar como sucesso
+      },
+      onError: (error) => {
+        // erros chegam aqui, nunca como exceção
+      },
+    });
     ```
+
+    `mount()` retorna um handle com `destroy()` e a promise `ready`. Chame `handle.destroy()` ao
+    remover o widget da página.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
-    ```
+  <Step title="Confira que funcionou">
+    A tela de boas-vindas aparece dentro do container e o `onReady` dispara. Se nada aparecer em 15
+    segundos, o `onError` recebe o código `6005`; as causas comuns estão logo abaixo.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Quando não funciona
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+<AccordionGroup>
+  <Accordion title="Nada aparece e o onError recebe 6005">
+    O widget não sinalizou `ready` dentro do tempo limite. As causas mais comuns:
+
+    - a origem da sua página não está na allowlist da integração (o navegador recusa o iframe sem
+      avisar o host);
+    - a `sdkUrl` expirou ou está inacessível.
+
+    O campo `context.likelyCauses` do erro lista as hipóteses. Veja
+    [tratamento de erros](/web-sdk/erros).
+  </Accordion>
+  <Accordion title="O onError recebe 6003 ou 6004">
+    Falta `sdkUrl` ou `target` (`6003`), ou a `sdkUrl` não é a URL absoluta esperada (`6004`). O
+    campo `context.param` do erro aponta qual opção corrigir.
+  </Accordion>
+</AccordionGroup>
+
+## Próximos passos
+
+<Columns cols={2}>
+  <Card title="Usar com React" icon="atom" href="/web-sdk/react">
+    O hook `useLegitimuz` e o componente `LegitimuzWidget`.
+  </Card>
+  <Card title="Opções do mount()" icon="settings-2" href="/web-sdk/opcoes">
+    Aparência, idioma, timeout e todos os callbacks.
+  </Card>
+</Columns>
