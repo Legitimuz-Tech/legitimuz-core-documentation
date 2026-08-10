@@ -1,33 +1,30 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# Agent instructions
 
-# Documentation project instructions
+The project instructions for this repo live in **[`CLAUDE.md`](./CLAUDE.md)** — stack, structure,
+non-negotiable rules, commit format, and the traps the local preview does not catch. Read it first,
+whatever agent you are.
 
-## About this project
+Per-subject conventions live in `.claude/skills/<name>/SKILL.md`. Load the one that matches what you
+are about to touch:
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
+| Editing                                        | Skill          |
+| ---------------------------------------------- | -------------- |
+| A new page, frontmatter, guide structure, MDX  | `pages`         |
+| `docs.json`, groups, tabs, redirects           | `navigation`    |
+| Colors, fonts, radii, logo, `custom.css`       | `design-system` |
+| Prose, headings, voice                         | `writing`       |
+| Code blocks, snippets, versions                | `code-samples`  |
+| Product names, flow terminology, audience      | `domain`        |
+| Examples with data, payloads, screenshots      | `privacy`       |
 
-## Terminology
+For Mintlify product knowledge (full component list, `docs.json` schema, latest features), use the
+`mintlify` skill, the Mintlify MCP server (`https://mcp.mintlify.com`), or
+[mintlify.com/docs](https://mintlify.com/docs). Those are the authority on the platform; the skills
+above are the authority on this project, and they win where the two disagree.
 
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
+Two rules worth repeating here, because they are the expensive ones:
 
-## Style preferences
-
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+- **Everything in this repo is public.** No holder PII, credentials, client names, or screenshots
+  with real data — a committed secret must be rotated, not just deleted. See the `privacy` skill.
+- **Nothing is committed without an explicit request.** Conventional Commits in English, subject
+  only, no body, no agent co-author or signature. See `CLAUDE.md`.
