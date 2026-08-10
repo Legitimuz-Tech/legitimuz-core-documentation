@@ -1,53 +1,122 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Legitimuz",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#fd7138",
+    "light": "#ff8a5c",
+    "dark": "#e95619"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+  "fonts": {
+    "heading": {
+      "family": "Open Runde",
+      "weight": 600,
+      "source": "/fonts/OpenRunde-Semibold.woff2",
+      "format": "woff2"
+    },
+    "body": {
+      "family": "Open Runde",
+      "weight": 400,
+      "source": "/fonts/OpenRunde-Regular.woff2",
+      "format": "woff2"
     }
   },
+  "icons": {
+    "library": "lucide"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentação",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Comece aqui",
+            "pages": [
+              "index",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Conceitos",
+            "pages": [
+              "conceitos/como-funciona",
+              "conceitos/fluxo-do-titular",
+              "conceitos/glossario"
+            ]
+          },
+          {
+            "group": "Web SDK",
+            "pages": [
+              "web-sdk/visao-geral",
+              "web-sdk/react",
+              "web-sdk/opcoes",
+              "web-sdk/eventos",
+              "web-sdk/erros",
+              "web-sdk/seguranca"
+            ]
+          },
+          {
+            "group": "Dashboard",
+            "pages": [
+              "dashboard/primeiros-passos"
+            ]
+          },
+          {
+            "group": "Ajuda",
+            "pages": [
+              "ajuda/faq",
+              "ajuda/solucao-de-problemas",
+              "ajuda/boas-praticas"
+            ]
+          },
+          {
+            "group": "Agentes de IA",
+            "pages": [
+              "ia/prompt-de-integracao",
+              "ia/mcp"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "Comece",
+            "pages": [
+              "api/visao-geral",
+              "api/autenticacao"
+            ]
+          },
+          {
+            "group": "Recursos",
+            "pages": [
+              "api/verificacoes",
+              "api/webhooks"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/errors/:code",
+      "destination": "/web-sdk/erros"
+    }
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+  "footer": {
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/legitimuzbr/",
+      "instagram": "https://www.instagram.com/legitimuz",
+      "youtube": "https://www.youtube.com/@legitimuz"
     }
   },
   "contextual": {
@@ -61,12 +130,5 @@
       "cursor",
       "vscode"
     ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
   }
 }
