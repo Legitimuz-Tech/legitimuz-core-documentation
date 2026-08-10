@@ -7,21 +7,36 @@ A Legitimuz verifica a identidade de pessoas em fluxos digitais: prova de vida, 
 captura e validação de documento. Você embute o fluxo de verificação na sua página com o Web SDK, o
 titular completa as etapas dentro de um widget seguro, e o resultado chega ao seu backend.
 
-Esta documentação serve duas audiências. O **integrador** instala o Web SDK e conecta o resultado
-ao próprio sistema: comece pelo [quickstart](/quickstart). O **analista** opera o dashboard de
-compliance: comece pelos [primeiros passos no dashboard](/dashboard/primeiros-passos).
+## Por onde você quer começar?
 
 <Columns cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Instale o Web SDK e abra o primeiro fluxo de verificação na sua página.
+  <Card title="Sou integrador" icon="code" href="/quickstart">
+    Instalo o Web SDK e conecto o resultado da verificação ao meu backend.
   </Card>
-  <Card title="Como a verificação funciona" icon="workflow" href="/conceitos/como-funciona">
+  <Card title="Sou analista" icon="layout-dashboard" href="/dashboard/getting-started">
+    Opero o dashboard de compliance e reviso as verificações dos titulares.
+  </Card>
+</Columns>
+
+## Explore a documentação
+
+<Columns cols={3}>
+  <Card title="Como a verificação funciona" icon="workflow" href="/concepts/how-it-works">
     Host, embed e servidor: quem faz o quê durante uma verificação.
   </Card>
-  <Card title="Eventos do Web SDK" icon="radio" href="/web-sdk/eventos">
-    Acompanhe o progresso da sessão em tempo real na sua página.
+  <Card title="Web SDK" icon="blocks" href="/web-sdk/overview">
+    Opções do `mount()`, eventos e códigos de erro.
   </Card>
-  <Card title="Tratamento de erros" icon="triangle-alert" href="/web-sdk/erros">
-    Os códigos de erro, o que cada um significa e como reagir.
+  <Card title="Referência da API" icon="code" href="/api/overview">
+    Autenticação, verificações e webhooks pela API.
+  </Card>
+  <Card title="Agentes de IA" icon="bot" href="/ai/integration-prompt">
+    Prompt de integração e o servidor MCP para assistentes de código.
+  </Card>
+  <Card title="Perguntas frequentes" icon="circle-help" href="/help/faq">
+    Dúvidas comuns sobre integração e sobre o fluxo de verificação.
+  </Card>
+  <Card title="Glossário" icon="book-open" href="/concepts/glossary">
+    Os termos do fluxo — titular, host, embed, step — explicados.
   </Card>
 </Columns>

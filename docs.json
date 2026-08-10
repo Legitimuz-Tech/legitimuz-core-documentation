@@ -28,73 +28,75 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "Comece aqui",
+        "icon": "rocket",
+        "pages": [
+          "index",
+          "quickstart"
+        ]
+      },
+      {
         "tab": "Documentação",
         "icon": "book-open",
         "groups": [
           {
-            "group": "Comece aqui",
-            "pages": [
-              "index",
-              "quickstart"
-            ]
-          },
-          {
             "group": "Conceitos",
             "pages": [
-              "conceitos/como-funciona",
-              "conceitos/fluxo-do-titular",
-              "conceitos/glossario"
+              "concepts/how-it-works",
+              "concepts/subject-flow",
+              "concepts/glossary"
             ]
           },
           {
             "group": "Web SDK",
             "pages": [
-              "web-sdk/visao-geral",
+              "web-sdk/overview",
               "web-sdk/react",
-              "web-sdk/opcoes",
-              "web-sdk/eventos",
-              "web-sdk/erros",
-              "web-sdk/seguranca"
+              "web-sdk/options",
+              "web-sdk/events",
+              "web-sdk/errors",
+              "web-sdk/security"
             ]
           },
           {
             "group": "Dashboard",
             "pages": [
-              "dashboard/primeiros-passos"
+              "dashboard/getting-started"
             ]
           },
           {
             "group": "Ajuda",
             "pages": [
-              "ajuda/faq",
-              "ajuda/solucao-de-problemas",
-              "ajuda/boas-praticas"
-            ]
-          },
-          {
-            "group": "Agentes de IA",
-            "pages": [
-              "ia/prompt-de-integracao",
-              "ia/mcp"
+              "help/faq",
+              "help/troubleshooting",
+              "help/best-practices"
             ]
           }
         ]
       },
       {
-        "tab": "API",
+        "tab": "Agentes de IA",
+        "icon": "bot",
+        "pages": [
+          "ai/integration-prompt",
+          "ai/mcp"
+        ]
+      },
+      {
+        "tab": "Referência",
         "icon": "code",
         "groups": [
           {
             "group": "Comece",
             "pages": [
-              "api/visao-geral",
-              "api/autenticacao"
+              "api/overview",
+              "api/authentication"
             ]
           },
           {
             "group": "Recursos",
             "pages": [
-              "api/verificacoes",
+              "api/verifications",
               "api/webhooks"
             ]
           }
@@ -105,7 +107,75 @@
   "redirects": [
     {
       "source": "/errors/:code",
-      "destination": "/web-sdk/erros"
+      "destination": "/web-sdk/errors"
+    },
+    {
+      "source": "/ajuda/boas-praticas",
+      "destination": "/help/best-practices"
+    },
+    {
+      "source": "/ajuda/faq",
+      "destination": "/help/faq"
+    },
+    {
+      "source": "/ajuda/solucao-de-problemas",
+      "destination": "/help/troubleshooting"
+    },
+    {
+      "source": "/api/autenticacao",
+      "destination": "/api/authentication"
+    },
+    {
+      "source": "/api/verificacoes",
+      "destination": "/api/verifications"
+    },
+    {
+      "source": "/api/visao-geral",
+      "destination": "/api/overview"
+    },
+    {
+      "source": "/conceitos/como-funciona",
+      "destination": "/concepts/how-it-works"
+    },
+    {
+      "source": "/conceitos/fluxo-do-titular",
+      "destination": "/concepts/subject-flow"
+    },
+    {
+      "source": "/conceitos/glossario",
+      "destination": "/concepts/glossary"
+    },
+    {
+      "source": "/dashboard/primeiros-passos",
+      "destination": "/dashboard/getting-started"
+    },
+    {
+      "source": "/ia/mcp",
+      "destination": "/ai/mcp"
+    },
+    {
+      "source": "/ia/prompt-de-integracao",
+      "destination": "/ai/integration-prompt"
+    },
+    {
+      "source": "/web-sdk/erros",
+      "destination": "/web-sdk/errors"
+    },
+    {
+      "source": "/web-sdk/eventos",
+      "destination": "/web-sdk/events"
+    },
+    {
+      "source": "/web-sdk/opcoes",
+      "destination": "/web-sdk/options"
+    },
+    {
+      "source": "/web-sdk/seguranca",
+      "destination": "/web-sdk/security"
+    },
+    {
+      "source": "/web-sdk/visao-geral",
+      "destination": "/web-sdk/overview"
     }
   ],
   "logo": {

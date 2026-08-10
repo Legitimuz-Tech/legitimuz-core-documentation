@@ -5,7 +5,7 @@ tag: "Em breve"
 ---
 
 Existe uma porta de criação, e é só uma: o seu backend chama o endpoint de criação com a
-[chave de API](/api/autenticacao) e recebe a `sdkUrl` da verificação. Não há criação pelo
+[chave de API](/api/authentication) e recebe a `sdkUrl` da verificação. Não há criação pelo
 navegador, por link genérico nem por credencial no corpo.
 
 <Info>
@@ -20,7 +20,7 @@ A `sdkUrl` identifica uma única verificação e é a credencial dela:
 
 - Vale por tempo limitado. Verificação expirada ou já decidida recusa qualquer mutação.
 - O escopo é o próprio fluxo: a URL não lista, não consulta e não alcança outras verificações.
-- Entregue-a ao seu front-end e monte o widget. Veja a [visão geral da API](/api/visao-geral) e o
+- Entregue-a ao seu front-end e monte o widget. Veja a [visão geral da API](/api/overview) e o
   [quickstart](/quickstart).
 
 ## Idempotência
@@ -36,7 +36,7 @@ nem reativação pelo navegador.
 ## Allowlist de origens
 
 O widget só monta em páginas cuja origem está registrada na integração, a mesma allowlist descrita
-em [segurança](/web-sdk/seguranca). O registro tem verificação de posse:
+em [segurança](/web-sdk/security). O registro tem verificação de posse:
 
 1. Cadastre a origem na integração. Ela nasce pendente.
 2. Publique o token de verificação como registro DNS TXT do domínio.

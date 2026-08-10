@@ -4,7 +4,7 @@ description: "Como o seu backend cria verificações e recebe as decisões."
 ---
 
 A integração completa tem dois lados. O front-end embute o widget com o
-[Web SDK](/web-sdk/visao-geral); o seu backend cria as verificações e recebe as decisões pela API.
+[Web SDK](/web-sdk/overview); o seu backend cria as verificações e recebe as decisões pela API.
 O titular e o navegador nunca tocam nas credenciais nem no resultado.
 
 <Info>
@@ -44,13 +44,13 @@ sequenceDiagram
 | `sdkUrl` | O widget, via seu front-end | Uma única verificação, com validade curta |
 
 A chave de API nunca sai do seu servidor. A `sdkUrl` é a credencial do fluxo: trate-a como segredo
-de curta duração, como descrito em [segurança](/web-sdk/seguranca).
+de curta duração, como descrito em [segurança](/web-sdk/security).
 
 <Columns cols={2}>
-  <Card title="Autenticação" icon="key-round" href="/api/autenticacao">
+  <Card title="Autenticação" icon="key-round" href="/api/authentication">
     O formato da chave, o ciclo de vida e a rotação sem downtime.
   </Card>
-  <Card title="Criar verificações" icon="user-check" href="/api/verificacoes">
+  <Card title="Criar verificações" icon="user-check" href="/api/verifications">
     A porta única de criação, idempotência e a allowlist de origens.
   </Card>
 </Columns>

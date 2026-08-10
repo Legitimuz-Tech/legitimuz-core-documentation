@@ -12,7 +12,7 @@ Regras do projeto, convenções de commit e as armadilhas do preview local estã
 
 - **Site**: Mintlify — MDX + `docs.json`, sem build próprio para manter.
 - **Conteúdo**: páginas `.mdx` com frontmatter `title`/`description`, organizadas por pasta por
-  grupo de navegação (`ajuda/`, `api/`, `conceitos/`, `dashboard/`, `ia/`, `web-sdk/`).
+  grupo de navegação (`help/`, `api/`, `concepts/`, `dashboard/`, `ai/`, `web-sdk/`).
 - **Visual**: tokens `--lz-*` do dashboard em `custom.css`, fontes Open Runde self-hosted em
   `fonts/`, logotipo e favicon em `logo/` e `favicon.svg`.
 - **Deploy**: GitHub app da Mintlify — automático a cada push na branch default. Não há CI nem

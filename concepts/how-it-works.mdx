@@ -16,13 +16,13 @@ tela, inclusive quando a resposta é repetir uma captura. Na prática:
 - O fluxo evolui sem você atualizar nada. A ordem das etapas, uma nova tentativa de captura e o
   encerramento são decisões do servidor.
 - O host não pula nem força etapas. O que a sua página controla está nas
-  [opções do `mount()`](/web-sdk/opcoes): aparência, idioma e callbacks.
+  [opções do `mount()`](/web-sdk/options): aparência, idioma e callbacks.
 
 ## O que chega à sua página
 
 O Web SDK entrega dois tipos de informação, por canais separados. Os eventos de progresso chegam em
 `onEvent`: telemetria da sessão (captura iniciada, etapa concluída, erro), útil para analytics e
-para reagir na sua interface. Veja [eventos](/web-sdk/eventos). O desfecho do fluxo chega em
+para reagir na sua interface. Veja [eventos](/web-sdk/events). O desfecho do fluxo chega em
 `onComplete` e `onCancel`: o titular terminou ou saiu. `onComplete` significa que o fluxo terminou,
 não que foi aprovado: cheque `result.status`.
 
@@ -36,8 +36,8 @@ entregue ao seu backend, fora do alcance do titular e de qualquer script de terc
 O iframe só se comunica com a sua página depois de um handshake que confere a origem do host contra
 a allowlist da integração, a mesma lista que autoriza a sua página a embutir o widget. Página fora
 da allowlist não recebe mensagem nenhuma e não monta o fluxo. Os detalhes estão em
-[segurança](/web-sdk/seguranca).
+[segurança](/web-sdk/security).
 
-<Card title="Fluxo do titular" icon="footprints" href="/conceitos/fluxo-do-titular">
+<Card title="Fluxo do titular" icon="footprints" href="/concepts/subject-flow">
   As telas que o titular percorre dentro do widget, etapa por etapa.
 </Card>

@@ -4,7 +4,7 @@ description: "Diagnóstico dos problemas mais comuns na integração do Web SDK.
 ---
 
 Cada seção abaixo parte do sintoma. Para o significado de um código específico, consulte o
-[catálogo de erros](/web-sdk/erros).
+[catálogo de erros](/web-sdk/errors).
 
 ## O widget não aparece
 
@@ -16,7 +16,7 @@ Na ordem em que costuma ser:
    da allowlist da integração, ou a `sdkUrl` expirou ou está inacessível. O navegador não distingue
    os casos para o host, então confira as hipóteses em `context.likelyCauses`.
 3. A CSP da sua página bloqueou o iframe. Se o seu site define Content Security Policy, libere
-   `frame-src https://verify.legitimuz.com`. Veja [segurança](/web-sdk/seguranca).
+   `frame-src https://verify.legitimuz.com`. Veja [segurança](/web-sdk/security).
 4. O `onError` recebeu `6003` ou `6004`. É configuração: falta `sdkUrl` ou `target`, ou a
    `sdkUrl` não é a URL absoluta esperada. `context.param` aponta a opção.
 
@@ -33,7 +33,7 @@ Na ordem em que costuma ser:
 
 - `eventsAllowlist` está vazio. Lista vazia silencia todos os eventos, o que é diferente de não
   passar a opção. Remova a opção ou liste os tipos que você quer.
-- O listener está no lugar errado. Os [eventos DOM](/web-sdk/eventos#eventos-dom) não borbulham:
+- O listener está no lugar errado. Os [eventos DOM](/web-sdk/events#eventos-dom) não borbulham:
   escute no próprio elemento `<legitimuz-websdk>`, não em um ancestral.
 - Você espera o desfecho em `onEvent`. O fim do fluxo chega por `onComplete` e `onCancel`, não
   pelo catálogo de eventos.

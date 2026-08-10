@@ -7,7 +7,7 @@ description: "As dúvidas mais comuns de quem integra o fluxo de verificação d
   <Accordion title="Quais frameworks são suportados?">
     Todos. O `mount()` é agnóstico: precisa só de um elemento para renderizar. Para React existe o
     wrapper [`@legitimuz/websdk-react`](/web-sdk/react); em Vue, Svelte e Angular, use o pacote npm
-    e os [eventos DOM](/web-sdk/eventos#eventos-dom) quando quiser escutar no template.
+    e os [eventos DOM](/web-sdk/events#eventos-dom) quando quiser escutar no template.
   </Accordion>
   <Accordion title="Existe SDK nativo para iOS e Android?">
     Hoje, não: a integração é web. Quando os SDKs nativos existirem, esta documentação passa a
@@ -26,7 +26,7 @@ description: "As dúvidas mais comuns de quem integra o fluxo de verificação d
     Não necessariamente, e não é isso que ele diz. `onComplete` informa que o fluxo terminou no
     navegador, e `result.status` pode ser `"abandoned"`. A decisão da verificação (aprovada,
     reprovada, em análise) nunca chega ao navegador: ela é entregue ao seu backend. Veja
-    [como a verificação funciona](/conceitos/como-funciona).
+    [como a verificação funciona](/concepts/how-it-works).
   </Accordion>
   <Accordion title="Como o meu sistema recebe a decisão da verificação?">
     No seu backend, fora do navegador: a página do titular não é lugar para o resultado.
@@ -34,7 +34,7 @@ description: "As dúvidas mais comuns de quem integra o fluxo de verificação d
   </Accordion>
   <Accordion title="Quais idiomas o widget fala?">
     Português do Brasil e inglês. O idioma vem da opção `locale` do `mount()`, e valores não
-    suportados caem para `pt-BR`. Veja o [fluxo do titular](/conceitos/fluxo-do-titular#idioma).
+    suportados caem para `pt-BR`. Veja o [fluxo do titular](/concepts/subject-flow#idioma).
   </Accordion>
   <Accordion title="O widget acompanha o tema escuro do meu site?">
     Sim, pela opção `colorScheme` do `mount()`: passe `"light"`, `"dark"`, ou deixe o default
@@ -48,13 +48,13 @@ description: "As dúvidas mais comuns de quem integra o fluxo de verificação d
   </Accordion>
   <Accordion title="A sdkUrl pode ir para o meu log ou analytics?">
     Não: ela é credencial de uma verificação de uma pessoa real. Não registre em log, não persista
-    e não envie a tag manager. Veja [segurança](/web-sdk/seguranca#a-sdkurl-e-credencial).
+    e não envie a tag manager. Veja [segurança](/web-sdk/security#a-sdkurl-e-credencial).
   </Accordion>
   <Accordion title="Um erro é recuperável. O que eu faço?">
     `recoverable: true` significa que vale tentar de novo, e o widget já orienta o titular na tela.
     Reserve a sua reação para os não recuperáveis: encerre a tela e ofereça um novo começo. O
-    catálogo completo está em [tratamento de erros](/web-sdk/erros).
+    catálogo completo está em [tratamento de erros](/web-sdk/errors).
   </Accordion>
 </AccordionGroup>
 
-Não achou a resposta? Veja a [solução de problemas](/ajuda/solucao-de-problemas).
+Não achou a resposta? Veja a [solução de problemas](/help/troubleshooting).

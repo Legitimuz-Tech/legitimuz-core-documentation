@@ -4,7 +4,7 @@ description: "O catálogo de eventos do Web SDK, os payloads e o desfecho do flu
 ---
 
 O widget reporta o progresso da sessão em eventos, entregues ao callback `onEvent` do
-[`mount()`](/web-sdk/opcoes):
+[`mount()`](/web-sdk/options):
 
 ```ts
 mount({
@@ -41,7 +41,7 @@ chega por aqui, e sim por `onComplete` e `onCancel`, descritos [abaixo](#desfech
 
 Os campos `from` e `to` carregam identificadores de etapa: são rótulos de telemetria, não um
 contrato para ramificar comportamento. Os campos `code` carregam um
-[código de erro](/web-sdk/erros).
+[código de erro](/web-sdk/errors).
 
 Para abrir as URLs de `terms.open` e `redirect.open`, prefira o callback `onOpenUrl`: ele recebe a
 URL já validada e deduplicada, e substitui a abertura default.

@@ -12,7 +12,7 @@ não sobre funcionalidade.
 | CDN | `<script>` que expõe `window.Legitimuz` | Páginas sem build, CMS, landing pages |
 | Wrapper React | `@legitimuz/websdk-react` | Apps React e Next.js |
 
-Com o pacote npm, importe `mount()` e chame com as [opções](/web-sdk/opcoes); a função só precisa
+Com o pacote npm, importe `mount()` e chame com as [opções](/web-sdk/options); a função só precisa
 de um elemento para renderizar e funciona em qualquer framework. O CDN expõe a mesma API sem
 instalação, e o script é evergreen: a URL `v1` serve sempre a última versão sem breaking change. O
 wrapper React resolve o ciclo de vida (montagem, `destroy()`, callbacks atualizados) por você, como
@@ -21,7 +21,7 @@ descrito em [usar com React](/web-sdk/react).
 {/* TODO: confirmar a URL de CDN — deploy ainda não ativo no legitimuz-core-websdk */}
 
 Em Vue, Svelte ou Angular, use o pacote npm e, se preferir escutar no template, os
-[eventos DOM](/web-sdk/eventos#eventos-dom) do elemento que o `mount()` cria.
+[eventos DOM](/web-sdk/events#eventos-dom) do elemento que o `mount()` cria.
 
 SDKs nativos para iOS e Android não estão disponíveis hoje. Quando existirem, esta página aponta
 para eles.

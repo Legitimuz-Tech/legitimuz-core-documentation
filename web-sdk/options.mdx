@@ -16,7 +16,7 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
 <ParamField path="sdkUrl" type="string" required>
   URL emitida pelo servidor da Legitimuz para uma verificação. Precisa ser absoluta e apontar para a
   origem do widget: qualquer outro valor gera o erro `6004`. Trate-a como credencial, sem registrar
-  em log nem enviar para ferramentas de analytics. Veja [segurança](/web-sdk/seguranca).
+  em log nem enviar para ferramentas de analytics. Veja [segurança](/web-sdk/security).
 </ParamField>
 
 <ParamField path="target" type="HTMLElement" required>
@@ -57,7 +57,7 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
 </ParamField>
 
 <ParamField path="onEvent" type="(event) => void">
-  Eventos de progresso da sessão. O catálogo completo está em [eventos](/web-sdk/eventos).
+  Eventos de progresso da sessão. O catálogo completo está em [eventos](/web-sdk/events).
 </ParamField>
 
 <ParamField path="eventsAllowlist" type="string[]">
@@ -75,7 +75,7 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
 
 <ParamField path="onComplete" type="(result) => void">
   O fluxo terminou. `result.status` é `"submitted"` ou `"abandoned"`, e terminar não significa
-  aprovado nem concluído com sucesso. Veja [eventos](/web-sdk/eventos#desfecho-do-fluxo).
+  aprovado nem concluído com sucesso. Veja [eventos](/web-sdk/events#desfecho-do-fluxo).
 </ParamField>
 
 <ParamField path="onCancel" type="(result) => void">
@@ -85,7 +85,7 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
 
 <ParamField path="onError" type="(error) => void">
   Erros de configuração e do fluxo. O SDK nunca lança exceção: sem `onError`, os erros vão para
-  `console.error`. Veja [tratamento de erros](/web-sdk/erros).
+  `console.error`. Veja [tratamento de erros](/web-sdk/errors).
 </ParamField>
 
 ## O handle
