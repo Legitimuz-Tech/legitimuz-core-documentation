@@ -15,7 +15,7 @@ não infira do que "faz sentido".
 | ------------------------------------------------------ | -------------------------------- | ----------------------------------------- |
 | `mount()`, opções, eventos, erros `6xxx`, CDN e npm    | `legitimuz-core-websdk`          | `packages/websdk/src/index.ts` · `types.ts` |
 | Fluxo de verificação, steps, liveness, captura         | `legitimuz-core-verification-web` | `src/shared/contract/step.ts`             |
-| Painel do analista, permissões, módulos                | `legitimuz-core-dashboard`       | `src/services/access/permissions.ts`      |
+| Painel do analista, permissões, módulos                | `legitimuz-core-dashboard`       | `src/services/access/{resources.ts,use-access.ts,can.tsx}` (checagem) · `src/features/organization/schemas/role.schema.ts` (modelo de papel) |
 
 Regra prática: se a página descreve um símbolo público (`mount`, `MountOptions`, um código de erro,
 um nome de evento), **abra o arquivo canônico antes de escrever** e copie o nome exato. Doc que
