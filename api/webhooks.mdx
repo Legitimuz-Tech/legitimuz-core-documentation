@@ -9,7 +9,8 @@ Você registra destinos (uma URL e a lista de eventos que ela recebe) e trata as
 
 <Info>
   O disparo de webhooks está em implementação. O modelo de destinos e entregas abaixo já é o
-  definitivo; o catálogo de eventos e o esquema de assinatura serão publicados quando fecharem.
+  definitivo, e os nomes de evento também — o que falta é o disparo em si e o esquema de assinatura,
+  publicados quando fecharem.
 </Info>
 
 ## Destinos
@@ -24,11 +25,39 @@ ser declarado.
 
 ## Eventos
 
-O vocabulário de eventos está em fechamento. Os dois primeiros são o resultado de verificação e a
-decisão de casos em revisão manual.
+Os nomes de evento já estão decididos — são os mesmos que cada entrega grava:
 
-{/* TODO: publicar o catálogo quando o backend fechar o enum — hoje os nomes verification.updated e
-    case.decided aparecem no repo apenas como exemplo */}
+| Evento | Quando dispara |
+| --- | --- |
+| `verification.created` | Uma verificação foi criada |
+| `verification.updated` | O status de uma verificação mudou |
+| `verification.approved` | Uma verificação foi aprovada |
+| `verification.reproved` | Uma verificação foi reprovada |
+| `verification.review` | Uma verificação entrou em revisão manual |
+| `verification.expired` | Uma verificação expirou sem desfecho |
+| `flow.published` | Uma nova versão do fluxo foi publicada |
+
+O evento de verificação carrega o [status atual](/api/verification-statuses):
+
+```json
+{
+  "event": "verification.updated",
+  "verification_id": "0197f3a1-8c4d-7b2e-9f01-2a3b4c5d6e7f",
+  "ref_id": "pedido-4821",
+  "status": "approved",
+  "identity_score": 71,
+  "fraud_score": 54,
+  "occurred_at": "2026-08-10T13:02:44Z"
+}
+```
+
+<Info>
+  O payload acima é o preview que o dashboard já mostra ao cadastrar um destino. O endpoint que
+  serve esse catálogo formalmente (com descrição e exemplo por evento) ainda não existe — os nomes
+  não mudam quando ele for publicado.
+  {/* TODO: confirmar o payload definitivo quando o disparo (worker) existir — hoje ele vem do
+      preview do dashboard, não de uma entrega real */}
+</Info>
 
 ## Entregas
 
