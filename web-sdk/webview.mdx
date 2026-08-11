@@ -54,18 +54,18 @@ extension VerificationViewController: WKUIDelegate {
 
 `requestMediaCapturePermissionFor` existe a partir do iOS 15 e cobre câmera e microfone. Sem o
 delegado, a `WKWebView` recusa a concessão por padrão, mesmo com as chaves do `Info.plist`
-presentes.
+presentes. `getUserMedia` em si só funciona em `WKWebView` de app de terceiro a partir do iOS 14.3;
+abaixo disso a API não existe na página.
 
 <Warning>
-  Geolocalização não passa pelo mesmo delegado: a `WKWebView` não tem um método equivalente ao
-  `requestMediaCapturePermissionFor` para `navigator.geolocation`. Com a chave
-  `NSLocationWhenInUseUsageDescription` presente, o sistema deveria pedir a permissão de localização
-  sozinho — mas esse caminho tem bugs documentados em versões específicas do WebKit, variando por
-  versão do iOS. Teste a coleta de localização na versão mínima de iOS que o seu app suporta antes de
-  depender dela.
-  {/* TODO: confirmar o comportamento na versão de iOS-alvo do app — comportamento inconsistente
-      relatado pela comunidade entre versões do WebKit, sem método de concessão documentado pela
-      Apple equivalente ao de câmera/microfone */}
+  Geolocalização não passa por delegado nenhum: a `WKWebView` não tem um método equivalente ao
+  `requestMediaCapturePermissionFor` para `navigator.geolocation` hoje. Quem pede a autorização de
+  localização ao sistema é o próprio WebKit — seu app não chama nada —, mas só faz isso com a chave
+  `NSLocationWhenInUseUsageDescription` presente no `Info.plist`. Sem ela, o pedido nunca é feito e a
+  página trava esperando uma posição que nunca chega, sem erro nenhum. Passe um `timeout` explícito
+  em `getCurrentPosition`/`watchPosition` para não depender de detectar isso pelo travamento.
+  {/* TODO: confirmar em aparelho real que a chave ausente produz esse travamento — comportamento
+      inferido do código-fonte do WebKit, não observado ponta a ponta */}
 </Warning>
 
 ## Android — WebView
@@ -109,8 +109,30 @@ O mecanismo por baixo é o mesmo dos dois itens acima — o wrapper só decide c
 Confira na documentação da versão do wrapper que você usa como conceder a permissão de mídia da
 WebView nos dois sistemas; nem toda versão cobre iOS e Android da mesma forma.
 
+No iOS, `getUserMedia` não funciona quando a página é servida por um esquema de URL customizado em
+vez de `https://` ou `http://localhost` — é limitação da própria `WKWebView`, não do wrapper.
+Confirme qual esquema a versão do seu wrapper usa antes de depurar a permissão.
+
 {/* TODO: confirmar e documentar a prop exata do react-native-webview usado no app quando o time
     mobile escolher a lib — variou entre versões e não está fixada aqui de propósito */}
+
+<Accordion title="O que acontece se eu não implementar o passo nativo">
+  A falha muda por plataforma e por capacidade, e vale saber qual é qual antes de abrir um chamado:
+
+  - **Android, câmera sem `onPermissionRequest`**: erro imediato (`NotAllowedError`) — o default do
+    `WebChromeClient` é negar.
+  - **Android, geolocalização sem `onGeolocationPermissionsShowPrompt`**: nenhum erro. O callback
+    nunca é chamado, e a chamada trava até o `timeout` que a página passar — ou para sempre, se ela
+    não passar nenhum.
+  - **iOS, câmera sem o delegado**: a `WKWebView` mostra o prompt do próprio sistema e funciona sem
+    código nenhum, contanto que a chave do `Info.plist` esteja presente.
+  - **iOS, geolocalização sem a chave do `Info.plist`**: o mesmo travamento silencioso do Android,
+    por um motivo diferente (veja o aviso acima).
+
+  Nas duas plataformas, "passo nativo ausente" e "titular recusou a permissão" chegam à página como
+  o mesmo erro na maioria dos casos. Confirme o lado nativo antes de tratar a ausência de coleta como
+  recusa do titular.
+</Accordion>
 
 <Card title="Iframe próprio" icon="app-window" href="/web-sdk/iframe">
   Se a página que a WebView abre não carrega o Web SDK, veja o que muda no tratamento de eventos.
