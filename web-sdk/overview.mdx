@@ -3,14 +3,17 @@ title: "Métodos de integração"
 description: "Escolha entre npm, CDN e o wrapper React para embutir o fluxo de verificação."
 ---
 
-Todos os caminhos montam o mesmo widget e recebem os mesmos eventos. A escolha é sobre o seu stack,
-não sobre funcionalidade.
+Os quatro caminhos abrem o mesmo fluxo de verificação. A escolha é sobre o seu stack e sobre quanto
+do ciclo de vida da sessão (eventos, erros, desfecho) você quer que o SDK resolva por você — não
+sobre funcionalidade da verificação em si, que é igual nos quatro.
 
-| Método | Como carrega | Melhor para |
-| --- | --- | --- |
-| Pacote npm | `npm install @legitimuz/websdk` | Projetos com bundler (qualquer framework ou vanilla) |
-| CDN | `<script>` que expõe `window.Legitimuz` | Páginas sem build, CMS, landing pages |
-| Wrapper React | `@legitimuz/websdk-react` | Apps React e Next.js |
+| Método | Como carrega | Eventos e callbacks | Melhor para |
+| --- | --- | --- | --- |
+| Pacote npm | `npm install @legitimuz/websdk` | Sim | Projetos com bundler (qualquer framework ou vanilla) |
+| CDN | `<script>` que expõe `window.Legitimuz` | Sim | Páginas sem build, CMS, landing pages |
+| Wrapper React | `@legitimuz/websdk-react` | Sim | Apps React e Next.js |
+| [Iframe próprio](/web-sdk/iframe) | `<iframe>` escrito à mão, sem o pacote | Não | Ambiente que não pode carregar o script do SDK |
+| [WebView](/web-sdk/webview) | A mesma página (npm, CDN ou iframe próprio) dentro de um app nativo | Depende do que a página usa | App iOS ou Android |
 
 Com o pacote npm, importe `mount()` e chame com as [opções](/web-sdk/options); a função só precisa
 de um elemento para renderizar e funciona em qualquer framework. O CDN expõe a mesma API sem
@@ -23,8 +26,10 @@ descrito em [usar com React](/web-sdk/react).
 Em Vue, Svelte ou Angular, use o pacote npm e, se preferir escutar no template, os
 [eventos DOM](/web-sdk/events#eventos-dom) do elemento que o `mount()` cria.
 
-SDKs nativos para iOS e Android não estão disponíveis hoje. Quando existirem, esta página aponta
-para eles.
+Sem carregar o pacote, você ainda pode abrir o fluxo num [iframe que você mesmo escreve](/web-sdk/iframe)
+— a verificação funciona igual, mas você troca eventos em tempo real por webhook. Para app nativo,
+[abra essa mesma página dentro de uma WebView](/web-sdk/webview): não existe SDK nativo para iOS ou
+Android hoje, e a WebView é como o fluxo web chega ao seu app.
 
 <Card title="Quickstart" icon="rocket" href="/quickstart">
   Do zero ao primeiro fluxo aberto na sua página.

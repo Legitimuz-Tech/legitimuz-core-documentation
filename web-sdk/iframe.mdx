@@ -1,0 +1,83 @@
+---
+title: "Usar sem o pacote (iframe próprio)"
+description: "Abra o fluxo de verificação num iframe que você mesmo escreve, sem carregar o Web SDK."
+---
+
+Ao final deste guia, o fluxo de verificação abre dentro de um iframe que você criou e estilizou,
+sem depender do pacote `@legitimuz/websdk`. A captura, o envio e a submissão do titular funcionam
+exatamente como nos outros métodos — o que muda é que nada disso chega até o seu código: sem o
+pacote, não há canal para `onReady`, `onEvent`, `onComplete`, `onCancel` nem `onError`.
+
+Use este caminho quando o seu ambiente não pode carregar o script do SDK. Se você só queria evitar a
+instalação via npm, o [CDN](/web-sdk/overview) resolve isso sem abrir mão dos eventos.
+
+## Pré-requisitos
+
+- Uma `sdkUrl` válida, a mesma emitida para os outros métodos.
+  {/* TODO: documentar a emissão da sdkUrl quando o endpoint get-sdk-url (DD-17, Fase 2) for público */}
+- A origem da sua página cadastrada na allowlist da integração. É a mesma exigência do Web SDK: o
+  servidor recusa o iframe para qualquer origem fora dela, com ou sem o pacote. Veja
+  [segurança](/web-sdk/security#comunicação-travada-por-origem).
+
+## Abra o fluxo
+
+<Steps>
+  <Step title="Crie o iframe">
+    Aponte `src` para a `sdkUrl` e repita os mesmos atributos que o Web SDK aplica no iframe que ele
+    gerencia: a lista de permissões que a captura usa, o sandbox que impede o conteúdo de navegar a
+    sua página, e nenhum referrer vazando para o widget.
+
+    ```html
+    <iframe
+      src="<SUA_SDK_URL>"
+      allow="camera; microphone; geolocation; fullscreen"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      referrerpolicy="no-referrer"
+      title="Verificação de identidade"
+      style="width: 100%; height: 640px; border: 0"
+    ></iframe>
+    ```
+  </Step>
+  <Step title="Dê altura ao iframe">
+    O conteúdo ocupa 100% do elemento. Sem altura definida — como no exemplo acima, ou por CSS —, o
+    iframe existe na página e não aparece.
+  </Step>
+  <Step title="Confira que funcionou">
+    A tela de boas-vindas aparece dentro do iframe. Dali em diante a captura, o envio e a submissão
+    seguem para o servidor da Legitimuz do mesmo jeito que no Web SDK — só não chega nenhum sinal até
+    a sua página. A seção abaixo explica o porquê e o que fazer a respeito.
+  </Step>
+</Steps>
+
+## O que você não recebe
+
+O Web SDK troca mensagens com o iframe por um handshake interno, iniciado pela sua página. Sem o
+pacote, ninguém inicia esse handshake, então:
+
+- Nenhum callback chega ao seu código — nem `onReady`, nem `onEvent`, nem o desfecho do fluxo
+  (`onComplete`/`onCancel`).
+- Cliques em "ver termos de uso" e o redirecionamento pós-fluxo não abrem nada. O conteúdo do iframe
+  roda em sandbox, de propósito, e não pode navegar a sua página nem abrir uma aba sozinho — é o
+  Web SDK, do lado de fora, quem faz essa abertura quando recebe o pedido. Sem ele, o clique não tem
+  efeito.
+
+<Warning>
+  Se o seu fluxo depende do titular conseguir ler os termos de uso, ofereça esse link na sua própria
+  página, fora do iframe. Dentro dele, o botão "ver termos de uso" não vai abrir nada.
+</Warning>
+
+## Como saber o resultado
+
+A decisão de uma verificação nunca chega ao navegador — nem no Web SDK, nem aqui. Use
+[webhooks](/api/webhooks) para saber quando uma verificação terminou e qual foi a decisão.
+
+## Quando usar o Web SDK em vez disso
+
+Se você precisa reagir à sessão em tempo real — fechar a tela quando o fluxo termina, mostrar seu
+próprio carregamento até o `onReady`, tratar erro de configuração antes que o titular veja uma tela
+em branco —, instale o [pacote npm](/web-sdk/overview) ou carregue [via CDN](/web-sdk/overview): a
+mesma `sdkUrl`, com o ciclo de vida já resolvido.
+
+<Card title="Webhooks" icon="webhook" href="/api/webhooks">
+  Receba a decisão da verificação no seu backend.
+</Card>

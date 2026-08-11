@@ -52,6 +52,8 @@
             "pages": [
               "web-sdk/overview",
               "web-sdk/react",
+              "web-sdk/iframe",
+              "web-sdk/webview",
               "web-sdk/options",
               "web-sdk/events",
               "web-sdk/errors",

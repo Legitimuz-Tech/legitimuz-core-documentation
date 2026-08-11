@@ -1,0 +1,117 @@
+---
+title: "Usar em WebView (app nativo)"
+description: "Abra o fluxo de verificação dentro de uma WebView e libere a câmera, o microfone e a geolocalização que o fluxo usa."
+---
+
+Não existe SDK nativo para iOS ou Android hoje — quando existir, esta página aponta para ele. Até
+lá, o caminho para um app nativo é abrir, dentro de uma WebView, a mesma página que você já usaria
+num navegador: com o Web SDK montado via [npm ou CDN](/web-sdk/overview), ou com o
+[iframe próprio](/web-sdk/iframe). Nada nessa página muda por rodar numa WebView; o que muda é a
+permissão que o seu app precisa conceder para a câmera, o microfone e a geolocalização funcionarem
+dentro dela.
+
+Ao final deste guia, a página abre dentro da WebView do seu app e a captura de documento, a prova de
+vida e a coleta de geolocalização têm acesso ao que cada uma precisa.
+
+## Por que a permissão não vem sozinha
+
+Um navegador pede câmera, microfone e localização ao usuário quando a página chama `getUserMedia` ou
+`navigator.geolocation`. Uma WebView embutida no seu app não pede: por padrão, ela nega em silêncio,
+mesmo a página declarando a permissão corretamente — o que o Web SDK já faz no iframe que ele cria
+(`allow="camera; microphone; geolocation; fullscreen"`, ver
+[segurança](/web-sdk/security#o-que-o-sdk-impõe-no-iframe)). Sem o passo nativo abaixo, a captura e a
+coleta de localização falham sem nenhum erro que a sua página consiga tratar.
+
+## iOS — WKWebView
+
+Declare os três textos de uso no `Info.plist` e implemente o delegado que autoriza câmera e
+microfone:
+
+```xml Info.plist
+<key>NSCameraUsageDescription</key>
+<string>Usamos a câmera para capturar o seu documento e a sua selfie na verificação.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Usamos o microfone durante a prova de vida.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Usamos a sua localização para checar a origem da verificação.</string>
+```
+
+```swift
+webView.uiDelegate = self
+
+extension VerificationViewController: WKUIDelegate {
+  func webView(
+    _ webView: WKWebView,
+    requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+    initiatedByFrame frame: WKFrameInfo,
+    type: WKMediaCaptureType,
+    decisionHandler: @escaping (WKPermissionDecision) -> Void
+  ) {
+    decisionHandler(.grant)
+  }
+}
+```
+
+`requestMediaCapturePermissionFor` existe a partir do iOS 15 e cobre câmera e microfone. Sem o
+delegado, a `WKWebView` recusa a concessão por padrão, mesmo com as chaves do `Info.plist`
+presentes.
+
+<Warning>
+  Geolocalização não passa pelo mesmo delegado: a `WKWebView` não tem um método equivalente ao
+  `requestMediaCapturePermissionFor` para `navigator.geolocation`. Com a chave
+  `NSLocationWhenInUseUsageDescription` presente, o sistema deveria pedir a permissão de localização
+  sozinho — mas esse caminho tem bugs documentados em versões específicas do WebKit, variando por
+  versão do iOS. Teste a coleta de localização na versão mínima de iOS que o seu app suporta antes de
+  depender dela.
+  {/* TODO: confirmar o comportamento na versão de iOS-alvo do app — comportamento inconsistente
+      relatado pela comunidade entre versões do WebKit, sem método de concessão documentado pela
+      Apple equivalente ao de câmera/microfone */}
+</Warning>
+
+## Android — WebView
+
+Declare as permissões no `AndroidManifest.xml`, peça a permissão em tempo de execução ao usuário
+(Android 6.0+ exige isso independentemente da WebView) e conceda no `WebChromeClient`. Câmera e
+microfone passam por `onPermissionRequest`; geolocalização é um método separado,
+`onGeolocationPermissionsShowPrompt`, e precisa da própria configuração ligada no `WebSettings`:
+
+```xml AndroidManifest.xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+```
+
+```kotlin
+webView.settings.javaScriptEnabled = true
+webView.settings.setGeolocationEnabled(true)
+
+webView.webChromeClient = object : WebChromeClient() {
+  override fun onPermissionRequest(request: PermissionRequest) {
+    request.grant(request.resources)
+  }
+
+  override fun onGeolocationPermissionsShowPrompt(
+    origin: String?,
+    callback: GeolocationPermissions.Callback?,
+  ) {
+    callback?.invoke(origin, true, false)
+  }
+}
+```
+
+Conceder aqui sem a permissão de runtime concedida ao app não libera nada: são duas camadas
+separadas, e as duas precisam estar de acordo. E sem `setGeolocationEnabled(true)`,
+`onGeolocationPermissionsShowPrompt` nunca dispara.
+
+## Framework híbrido (React Native, Flutter e afins)
+
+O mecanismo por baixo é o mesmo dos dois itens acima — o wrapper só decide como ele expõe isso.
+Confira na documentação da versão do wrapper que você usa como conceder a permissão de mídia da
+WebView nos dois sistemas; nem toda versão cobre iOS e Android da mesma forma.
+
+{/* TODO: confirmar e documentar a prop exata do react-native-webview usado no app quando o time
+    mobile escolher a lib — variou entre versões e não está fixada aqui de propósito */}
+
+<Card title="Iframe próprio" icon="app-window" href="/web-sdk/iframe">
+  Se a página que a WebView abre não carrega o Web SDK, veja o que muda no tratamento de eventos.
+</Card>
