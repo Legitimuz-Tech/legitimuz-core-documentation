@@ -1,0 +1,72 @@
+---
+title: "Papéis e permissões"
+description: "Como o acesso ao dashboard é concedido por recurso e ação, e a diferença entre papel padrão e papel próprio da conta."
+---
+
+O que um analista vê e faz no dashboard depende do papel dele naquela conta. Um papel é uma matriz
+de recursos — verificações, integrações, papéis, cobrança e outros — contra cinco ações possíveis
+em cada um.
+
+## As cinco ações
+
+Toda permissão é um par de recurso e ação, nunca uma ação solta:
+
+| Ação | O que libera |
+| --- | --- |
+| Criar | Adicionar um registro novo do recurso |
+| Ler | Ver o recurso |
+| Atualizar | Editar um registro existente |
+| Excluir | Remover um registro |
+| Executar | Disparar uma ação que não é CRUD — por exemplo, exportar dados de verificações |
+
+Um papel pode ter qualquer combinação dessas ações em cada recurso. Ler não implica excluir, e
+excluir não implica ler.
+
+## Recursos
+
+Os principais recursos que aparecem na matriz de papéis:
+
+| Recurso | Cobre |
+| --- | --- |
+| Verificações | As verificações da conta |
+| Dado do titular nas verificações | Nome, CPF e nascimento sem máscara — permissão separada da leitura da verificação em si |
+| Alertas de verificação | Sinais e ocorrências levantados numa verificação |
+| Arquivos | Documentos e imagens capturados no fluxo |
+| Casos de revisão | A fila de revisão manual |
+| Fluxos e versões de fluxo | A configuração do fluxo de verificação |
+| Integrações, temas, chaves e origens | A configuração de cada integração do Web SDK |
+| Webhooks e entregas | Destinos de webhook e o histórico de entrega |
+| Usuários e vínculos de conta | Quem tem acesso à conta e com qual papel |
+| Papéis e permissões | A própria matriz descrita nesta página |
+| Listas e itens de lista | Listas de restrição usadas nas verificações |
+| Enriquecimentos | Consultas complementares sobre o titular |
+| Organização e cobrança | Dados da conta e faturamento |
+| Logs de auditoria | O histórico de alteração descrito abaixo |
+
+<Note>
+  Acesso a dado sensível do titular é uma permissão à parte da leitura da verificação: um papel pode
+  ver que a verificação existe e o status dela sem enxergar nome, CPF ou nascimento.
+</Note>
+
+## Papel padrão e papel da conta
+
+Um papel tem origem: **padrão** (definido pela Legitimuz, vem pronto em toda conta) ou **da conta**
+(criado por quem administra o ambiente, com a combinação de recursos e ações que fizer sentido para
+o seu time). Editar um papel padrão não é possível — para um conjunto de permissões diferente, crie
+um papel novo.
+
+Cada papel mostra quantos membros da conta o usam. Removê-lo exige mover esses membros para outro
+papel antes.
+
+## Log de auditoria
+
+Toda alteração feita por um usuário é registrada no servidor: o que mudou, quem mudou e quando.
+Campo sensível não guarda o valor antigo nem o novo no registro — só que ele foi alterado. A
+auditoria prova que algo mudou e por quem, não reabre o dado que foi apagado ou corrigido.
+
+{/* TODO: confirmar quando a tela de consulta ao log de auditoria existir no dashboard — hoje o
+    registro acontece no servidor, sem uma tela própria para o analista consultar */}
+
+<Card title="Primeiros passos no dashboard" icon="layout-dashboard" href="/dashboard/getting-started">
+  Como entrar e trocar de conta.
+</Card>

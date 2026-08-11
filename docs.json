@@ -63,7 +63,8 @@
           {
             "group": "Dashboard",
             "pages": [
-              "dashboard/getting-started"
+              "dashboard/getting-started",
+              "dashboard/permissions"
             ]
           },
           {
@@ -71,7 +72,8 @@
             "pages": [
               "help/faq",
               "help/troubleshooting",
-              "help/best-practices"
+              "help/best-practices",
+              "help/certifications"
             ]
           }
         ]
@@ -99,6 +101,7 @@
             "group": "Recursos",
             "pages": [
               "api/verifications",
+              "api/verification-statuses",
               "api/webhooks"
             ]
           }

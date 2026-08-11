@@ -1,0 +1,49 @@
+---
+title: "Status de verificação"
+description: "Os cinco valores fechados de status, os sub-estados da fila de revisão, e por que expirado não é um deles."
+---
+
+Toda verificação tem um `status`. O conjunto é fechado, com cinco valores:
+
+| `status` | O que significa |
+| --- | --- |
+| `not_opened` | O titular ainda não abriu o fluxo. |
+| `started` | O fluxo está em andamento. |
+| `approved` | A verificação foi aprovada. |
+| `reproved` | A verificação foi reprovada. |
+| `review` | A verificação está em revisão manual. |
+
+O mesmo valor aparece na verificação e no [evento de webhook](/api/webhooks#eventos) que ela dispara.
+
+## Por que expirado não é um status
+
+Uma verificação que passou do prazo não muda de `status` — ela continua com o último valor que
+tinha, e a expiração é lida pelo campo `expires_at`, não por um sexto valor de `status`. Tratar
+expiração como status exigiria um job reescrevendo linhas depois do fato, e essa reescrita perderia
+a hora em que o desfecho de verdade aconteceu.
+
+Se você precisa saber se uma verificação expirou, compare `expires_at` com o horário atual; não
+espere um `status` chamado `expired`.
+
+## A fila de revisão manual
+
+Quando `status` é `review`, o caso segue sub-estados próprios, também fechados:
+
+| Sub-estado | O que significa |
+| --- | --- |
+| `open` | O caso está na fila, sem analista designado. |
+| `assigned` | Um analista está com o caso. |
+| `decided` | Um analista decidiu o caso. |
+
+A decisão de um caso `decided` é `approved` ou `reproved` — os mesmos dois valores que fecham o
+`status` da verificação quando ela sai da revisão.
+
+## Quando o desfecho aconteceu
+
+O campo `decided_at` guarda o horário exato em que a verificação chegou a `approved` ou `reproved`.
+Ele só é preenchido nesses dois casos — não use `updated_at` como aproximação: esse campo muda a
+cada atualização da linha, não só no desfecho, e degrada como medida de tempo de conclusão.
+
+<Card title="Webhooks" icon="webhook" href="/api/webhooks">
+  Receba estes valores automaticamente, sem precisar consultar a API.
+</Card>
