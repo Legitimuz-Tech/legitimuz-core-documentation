@@ -34,7 +34,7 @@ chega por aqui, e sim por `onComplete` e `onCancel`, descritos [abaixo](#desfech
 | `liveness.failed`             | A prova de vida falhou                            | `code`                |
 | `session.completed`           | O fluxo terminou                                  | `status`              |
 | `session.error`               | Um erro ocorreu na sessão                         | `code`, `recoverable` |
-| `session.abandoned`           | Reservado; o widget ainda não emite               | —                     |
+| `session.abandoned`           | O titular confirmou a saída no controle `closeButton` | —                 |
 | `decision.notified`           | Reservado; o widget ainda não emite               | —                     |
 | `terms.open`                  | O widget pediu para abrir os termos de uso        | `url`                 |
 | `redirect.open`               | O widget pediu um redirect pós-fluxo              | `url`                 |
@@ -43,8 +43,11 @@ Os campos `from` e `to` carregam identificadores de etapa: são rótulos de tele
 contrato para ramificar comportamento. Os campos `code` carregam um
 [código de erro](/web-sdk/errors).
 
-Para abrir as URLs de `terms.open` e `redirect.open`, prefira o callback `onOpenUrl`: ele recebe a
-URL já validada e deduplicada, e substitui a abertura default.
+O SDK abre `terms.open` e `redirect.open` sozinho, numa aba nova
+(`window.open(url, "_blank", "noopener,noreferrer")`), deduplicando cliques repetidos na mesma URL
+dentro de 1 segundo — o iframe não pode abrir popup nem navegar a sua página por conta própria. Não
+há como substituir essa abertura; o evento chega ao `onEvent` de qualquer forma, para quem só quer
+observar.
 
 ## Modelo evergreen
 
@@ -63,7 +66,10 @@ analytics e não quer cardinalidade nova aparecendo sozinha, congele o conjunto 
 O desfecho chega por dois callbacks próprios, fora do catálogo de eventos. `onComplete` dispara
 quando o widget declara fim de fluxo: `result.status` é `"submitted"` (o titular enviou tudo) ou
 `"abandoned"` (o fluxo terminou sem envio). `onCancel` dispara quando o widget declara
-cancelamento, e `result.sessionId` identifica a sessão quando disponível.
+cancelamento — pelo servidor ou porque o titular confirmou a saída no controle
+[`closeButton`](/web-sdk/options) —, e `result.sessionId` identifica a sessão quando
+disponível. Esse mesmo cancelamento pelo titular também chega como o evento `session.abandoned` no
+`onEvent`, para quem só acompanha telemetria.
 
 Terminar não é ser aprovado: a decisão da verificação chega ao seu backend, nunca ao navegador. E a
 régua entre os dois callbacks é a origem da declaração, não o resultado, então um abandono pode

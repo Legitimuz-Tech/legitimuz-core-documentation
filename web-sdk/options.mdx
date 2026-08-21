@@ -29,10 +29,18 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
   momento do mount. Valor inválido gera `6004`, mas não bloqueia: o widget abre com o fallback.
 </ParamField>
 
-<ParamField path="locale" type="string" default="navigator.language">
-  Idioma do widget. Sem a opção, vale o idioma do navegador; sem navegador identificável, `pt-BR`.
-  O widget suporta `pt-BR` e `en`, resolve por prefixo (`en-US` vira `en`) e cai para `pt-BR` quando
-  não reconhece o valor.
+<ParamField path="locale" type="string" default="pt-BR">
+  Idioma do widget. Sem a opção, `pt-BR` — o SDK não detecta o idioma do navegador. O widget
+  suporta `pt-BR` e `en`, resolve por prefixo (`en-US` vira `en`) e cai para `pt-BR` quando não
+  reconhece o valor.
+</ParamField>
+
+<ParamField path="closeButton" type='"left" | "right" | "hidden"' default="right">
+  Onde o controle de fechar do próprio widget renderiza, ou `"hidden"` para não renderizar nenhum.
+  Clicar nele pede confirmação ao titular antes de encerrar o fluxo; confirmando, chega ao host como
+  `onCancel` e o evento `session.abandoned`, descritos em [eventos](/web-sdk/events). O controle
+  fica oculto na etapa final independente do valor. Valor inválido gera `6004`, mas não bloqueia: o
+  widget abre com o fallback `"right"`.
 </ParamField>
 
 <ParamField path="iframeTitle" type="string" default="Verificação de identidade">
@@ -43,12 +51,6 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
 <ParamField path="readyTimeoutMs" type="number" default="15000">
   Quanto esperar pelo sinal `ready` do widget antes de reportar `6005` via `onError`. `0` ou
   `Infinity` desligam o diagnóstico.
-</ParamField>
-
-<ParamField path="sandboxScenario" type="string">
-  Reservado para o ambiente de testes.
-  {/* TODO: documentar quando o sandbox existir — hoje o parâmetro não tem consumidor no
-      verification-web */}
 </ParamField>
 
 <ParamField path="onReady" type="() => void">
@@ -66,21 +68,15 @@ Pelo CDN, a mesma função está em `window.Legitimuz.mount(options)`.
   todos os eventos. Não afeta `onComplete`, `onCancel` nem `onError`.
 </ParamField>
 
-<ParamField path="onOpenUrl" type="(request) => void">
-  Substitui a abertura default de URLs que o widget pede para abrir do lado do host (termos de uso e
-  redirect pós-fluxo). Sem a opção, o SDK abre com `window.open(url, "_blank",
-  "noopener,noreferrer")`. O callback só recebe URL `http(s)` já validada e deduplicada;
-  `request.reason` distingue `terms.open` de `redirect.open`.
-</ParamField>
-
 <ParamField path="onComplete" type="(result) => void">
   O fluxo terminou. `result.status` é `"submitted"` ou `"abandoned"`, e terminar não significa
   aprovado nem concluído com sucesso. Veja [eventos](/web-sdk/events#desfecho-do-fluxo).
 </ParamField>
 
 <ParamField path="onCancel" type="(result) => void">
-  O widget declarou cancelamento. `result.sessionId` identifica a sessão, quando disponível. Para
-  retomar, chame `mount()` de novo; quem resolve o estado é o servidor.
+  O widget declarou cancelamento — pelo servidor ou porque o titular confirmou a saída no controle
+  `closeButton`. `result.sessionId` identifica a sessão, quando disponível. Para retomar, chame
+  `mount()` de novo; quem resolve o estado é o servidor.
 </ParamField>
 
 <ParamField path="onError" type="(error) => void">

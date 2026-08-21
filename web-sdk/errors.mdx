@@ -78,10 +78,11 @@ ocorrência e `doc_url`, e nenhum é recuperável sem corrigir a configuração.
 | Código | Nome                     | Quando acontece                                                       |
 | ------ | ------------------------ | ---------------------------------------------------------------------- |
 | `6003` | `missing_required_param` | Falta `sdkUrl` ou `target` (`context.param` diz qual)                  |
-| `6004` | `invalid_param_value`    | `sdkUrl` não é a URL absoluta esperada, ou `colorScheme` é inválido    |
+| `6004` | `invalid_param_value`    | `sdkUrl` não é a URL absoluta esperada, ou `colorScheme`/`closeButton` são inválidos |
 | `6005` | `sdk_not_initialized`    | O widget não sinalizou `ready` dentro de `readyTimeoutMs`              |
 
-O `6004` de `colorScheme` é o único que não bloqueia o mount: o widget abre com o tema de fallback.
+Entre as causas do `6004`, `colorScheme` e `closeButton` são as únicas que não bloqueiam o mount: o
+widget abre com o fallback de cada uma.
 
 {/* TODO: reconciliar o recoverable do 6005 — o websdk sintetiza com false e o catálogo do
     verification-web declara true; hoje o que chega ao host é o do websdk */}
