@@ -24,15 +24,13 @@ ao seu código.
     ```
 
     ```html CDN
-    <script src="https://embed.legitimuz.com/v1/websdk.js"></script>
+    <script src="https://sdk.legitimuz.com/v1/websdk.js"></script>
     ```
 
     </CodeGroup>
 
-    {/* TODO: confirmar a URL de CDN — hoje ela só existe no README do legitimuz-core-websdk e o
-        workflow de deploy do CDN está desabilitado */}
-
-    Pelo CDN, o SDK fica disponível como `window.Legitimuz`, com a mesma API do pacote npm.
+    Pelo CDN, o SDK fica disponível como `window.Legitimuz`, com a mesma API do pacote npm. A URL
+    `v1` é evergreen: serve sempre a última versão sem breaking change.
   </Step>
   <Step title="Reserve o container">
     O widget renderiza dentro de um elemento seu e ocupa 100% da altura dele. Sem altura, o widget

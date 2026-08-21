@@ -18,9 +18,13 @@ vida e a coleta de geolocalização têm acesso ao que cada uma precisa.
 Um navegador pede câmera, microfone e localização ao usuário quando a página chama `getUserMedia` ou
 `navigator.geolocation`. Uma WebView embutida no seu app não pede: por padrão, ela nega em silêncio,
 mesmo a página declarando a permissão corretamente — o que o Web SDK já faz no iframe que ele cria
-(`allow="camera; microphone; geolocation; fullscreen"`, ver
+(`allow="camera; microphone; geolocation; fullscreen; accelerometer; gyroscope"`, ver
 [segurança](/web-sdk/security#o-que-o-sdk-impõe-no-iframe)). Sem o passo nativo abaixo, a captura e a
 coleta de localização falham sem nenhum erro que a sua página consiga tratar.
+
+{/* TODO: confirmar se accelerometer/gyroscope exigem algum passo nativo equivalente ao desta
+    página em WKWebView/WebView Android, ou se o navegador concede sem prompt — não verificado
+    ponta a ponta numa WebView real */}
 
 ## iOS — WKWebView
 

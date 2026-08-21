@@ -12,20 +12,18 @@ responsabilidade.
 Se o seu site define Content Security Policy, libere as duas origens do produto:
 
 ```text
-script-src  https://embed.legitimuz.com;
+script-src  https://sdk.legitimuz.com;
 frame-src   https://verify.legitimuz.com;
 ```
 
 Instalando via npm, a entrada de `script-src` para o CDN não é necessária.
 
-{/* TODO: confirmar a URL de CDN embed.legitimuz.com — o deploy do CDN ainda não está ativo no
-    legitimuz-core-websdk */}
-
 ## O que o SDK impõe no iframe
 
 O iframe pede apenas as permissões que o fluxo de captura usa: `camera`, `microphone`,
-`geolocation` e `fullscreen`. O atributo `sandbox` (`allow-scripts allow-same-origin allow-forms`)
-impede o conteúdo de navegar a sua página ou abrir popups por conta própria. O iframe é criado com
+`geolocation`, `fullscreen`, `accelerometer` e `gyroscope` — as duas últimas alimentam o motor de
+prova de vida durante a captura guiada. O atributo `sandbox` (`allow-scripts allow-same-origin
+allow-forms`) impede o conteúdo de navegar a sua página ou abrir popups por conta própria. O iframe é criado com
 `referrerPolicy: "no-referrer"`, então a URL da sua página não vaza para o widget.
 
 O destino do iframe é constante do build do SDK. Uma `sdkUrl` apontando para qualquer outra origem
